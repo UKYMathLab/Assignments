@@ -7,7 +7,7 @@ class ExamineData:
         print(f'Data\n====\n{data.head}\n')
 
     def pause(self):
-        input()
+        input('Press any key to continue . . . \n')
 
 
 
@@ -18,4 +18,4 @@ class ShowSample:
         print(f'Sample #{idx+1}\n==============\n{self.data.iloc[idx]}\n')
 
     def pause(self):
-        input()
+        input('Press any key to continue . . . \n')

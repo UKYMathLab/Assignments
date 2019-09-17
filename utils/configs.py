@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 class AssignmentsConfig:
     def __init__(self):
-        self.data_path = os.path.join('./data_f19.xlsx')
+        self.data_path = os.path.join('./data/data_f19.xlsx')
 
         self.time_encodings = OrderedDict({'9:00-9:30' : 0,
                                           '9:30-10:00' : 1,

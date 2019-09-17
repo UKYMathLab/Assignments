@@ -2,8 +2,8 @@ import os
 import pandas as pd
 import numpy as np
 
-from configs import AssignmentsConfig
-import drivers
+from utils.configs import AssignmentsConfig
+import utils.drivers as drivers
 
 ################################################################################
 
