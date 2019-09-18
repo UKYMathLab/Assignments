@@ -1,14 +1,7 @@
 class Student:
-    def __init__(self):
-        self.name = ''
-        self.available_times = set()
-        self.preferences = []
-        self.is_assigned = False
-        self.assignments = set()
+    def __init__(self, name: str, email: str, available_times: set, preferences: list):
+        self.name = str(name)
+        self.email = str(email)
 
-    def assign(self, group_id: str):
-        self.assignments.add(group_id)
-        self.is_assigned = True
-    def unassign(self, group_id: str):
-        self.assignments.remove(group_id)
-        self.is_assigned = False
+        self.available_times = available_times
+        self.preferences = preferences
