@@ -7,6 +7,4 @@ class LabGroup:
         self.possible_group_members = []
         self.actual_group_members = []
 
-        self.three_student_combos = []   # list of sets
-        self.four_student_combos = []    # list of sets
-        self.five_student_combos = []    # list of sets
+        self.possible_groups = {3: [], 4: [], 5: []}
