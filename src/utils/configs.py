@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from collections import OrderedDict
 
 class AssignmentsConfig:
@@ -27,3 +28,44 @@ class AssignmentsConfig:
                                            'D' : 4,
                                            'E' : 5 })
         self.column_names = ['Name', *[*self.time_encodings], 'pref1', 'pref2', 'pref3', 'pref4']
+
+    
+def find_data_dir(path: Path):
+    # find data directory by searching hierarchy of directories
+    # should find 'data' directory
+    par = path.parent
+    max_tries = 3
+    
+    i = 0
+    while i < max_tries:
+        if par / 'data' in par.iterdir():
+            path = par / 'data'
+            i = max_tries + 1   # condition found, break out of while
+        else:
+            i += 1
+            par = par.parent    # try again, but one directory up
+            
+        if i == max_tries:
+            print("Can't find data directory.\n")
+    
+    return path
+
+
+class PreprocessingConfig:
+    def __init__(self):
+        # paths
+        self.data_dir = find_data_dir(Path().cwd())
+        self.data_file_name = 'FakeData.csv'
+        self.data_path = self.data_dir / self.data_file_name        
+
+        # formatting data
+        self.column_names = ['Timestamp', 'Name', 'Email',
+                        'First', 'Second', 'Third', 'Fourth', 'Fifth',
+                        'M_times', 'T_times', 'W_times', 'Th_times', 'F_times']
+        
+if __name__ == '__main__':
+    config = PreprocessingConfig()
+
+    print(f'Data directory: {config.data_dir}')
+
+
