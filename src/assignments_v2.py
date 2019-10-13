@@ -4,7 +4,8 @@ import itertools as it
 import numpy as np
 import pandas as pd
 
-from utils.configs import AssignmentConfig
+from utils import configs
+from utils.preprocessing import preprocess
 from Student import Student
 from LabGroup import LabGroup
 import utils.drivers as driver
@@ -12,10 +13,10 @@ import utils.drivers as driver
 
 def find_assignments():
     
-    config = AssignmentConfig()
+    config = configs.AssignmentsConfig()
 
     # load the data
-    students, lab_groups = load_data(config.file_path)
+    students, lab_groups = preprocess(config.preprocess_config)
     
     # match students with lab group times for each lab group
     for lg in lab_groups:
