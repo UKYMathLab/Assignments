@@ -1,0 +1,15 @@
+Rough sketch of future work
+
+STEP 1
+1. Dictionary of (time, students) pairs for each lab group
+2. Find product of all such lab group dictionaries, and ask is everyone in this tuple?
+3. Get rid of tuples that dont contain everyone
+
+Returns dictionary of (times, partitions) pairs
+
+
+STEP 2
+1. Stable Marriage on partitions for each time
+2. (Hopefully) implement variable group size for Stable Marriage algorithm
+3. Run results though happiness function to determine which is best
+
