@@ -39,7 +39,9 @@ class PreprocessingConfig:
 
 class AssignmentsConfig:
     def __init__(self):
-        preprocess_config = PreprocessingConfig()
+        self.preprocess_config = PreprocessingConfig()
+        
+        self.group_sizes = list(range(3,5+1))
 
 
 if __name__ == '__main__':
