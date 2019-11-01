@@ -1,5 +1,5 @@
 class LabGroup:
-    def __init__(self, group_name: str, available_times: set):
+    def __init__(self, group_name: str="", available_times: set=set()):
         self.name = group_name
 
         self.available_times = available_times
@@ -17,7 +17,9 @@ class LabGroup:
         for time in self.available_times:
             for student in students:
                 # check if intersection is nonempty
-                if len(self.available_times.intersect(student.available_times)) > 0:
+                if len(self.available_times.intersection(student.available_times)) > 0:
+                    # check if key is already in dictionary
+                    if time not in self.good_times:
+                        self.good_times[time] = set()
                     self.good_times[time].add(student)
                 # else discard
-

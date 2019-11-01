@@ -61,9 +61,10 @@ def preprocess(config):
     for i, lg in enumerate(lab_groups):
         sample = lab_group_data.iloc[i]
 
-        sample.name = sample["Name"]
+        lg.name = sample["Name"]
+        lg.available_times = _format_times(sample)
 
-    return students
+    return students, lab_groups
 
 
 if __name__ == '__main__':

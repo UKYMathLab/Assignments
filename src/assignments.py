@@ -5,9 +5,10 @@ import collections
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 from utils import configs
-from utils.preprocessing import preprocess
+from preprocessing import preprocess
 from Student import Student
 from LabGroup import LabGroup
 import utils.drivers as driver
@@ -25,7 +26,7 @@ def _check_is_good_combo(student_combo: list, all_students: list, config) -> boo
     is_good = []
 
     # all students are accounted for and no student is present more than once
-    if set([*studs for studs in student_combo]) == set(all_students):
+    if set([stud for studs in student_combo for stud in studs]) == set(all_students):
         #occurrences = collections.Counter(*student_combo)
 
         # all students occur only one time
@@ -48,7 +49,6 @@ def _score_configuration(combination, lab_groups):
     their actual assignment.
     """
 
-
     # calculate the index offset for each student
     total_unhappiness = 0
 
@@ -67,25 +67,36 @@ def find_assignments(students, lab_groups, config):
 
     good_combos = []
     cart_prod_lg_times = [list(lg.good_times.keys()) for lg in lab_groups]
-
+    # for elem in cart_prod_lg_times: print(f"number of times: {len(elem)}   --->   {elem}\n")
+    # for elem in cart_prod_lg_times: print(f"\n{elem}\n")
     # I'm not sure if this product will work as coded (since input is list of lists)
-    for time_combo in enumerate(it.product(*cart_prod_lg_times)):
-        lg_students = [lg.good_times[time_combo[i]] for i, lg in enumerate(lab_groups)]
-        students_in_time_combo = [*studs for studs in lg_students]
+    all_time_combos_pbar = tqdm(list(it.product(*cart_prod_lg_times)), desc="Going through time combinations")
+    for time_combo in all_time_combos_pbar:
+        lg_students = [lg.good_times[time_combo[i]] for i, lg in enumerate(lab_groups)]     # list of sets of students
+        students_in_time_combo = [stud for studs in lg_students for stud in studs]
+
+        # for i, elem in enumerate(students_in_time_combo): print(i, elem)
+        # print()
+        # for i, elem in enumerate(set(students_in_time_combo)): print(i, elem)
 
         # all students accounted for
         if set(students_in_time_combo) == set(students):
             for group_size_combo in it.combinations_with_replacement(config.group_sizes, r=len(lab_groups)):
-
+                # print(f"{group_size_combo} =?= {len(students)}")
                 # checksum
                 if sum(group_size_combo) == len(students):
-                    # list of lists of lists
-                    all_student_combos = [it.combinations(lg_studs[i], r=group_size_combo[i]) for i, lg_studs in enumerate(lg_students)]
-
+                    all_student_combos = [it.combinations(lg_studs, r=group_size_combo[i]) for i, lg_studs in enumerate(lg_students)]   # list of lists of lists
+                    filter_student_combos = [student_combo for student_combo in all_student_combos if set([stud for studs in student_combo for stud in studs]) == set(students)]
+                    print(len(filter_student_combos))
+                    # print(f"Total permutations: {len(list(all_student_combos[0]))} x {len(list(all_student_combos[1]))} x {len(list(all_student_combos[2]))} x {len(list(all_student_combos[3]))} x {len(list(all_student_combos[4]))}")
                     # check if every combination is compatible
-                    for particular_student_combo in it.product(*all_student_combos):
-                        if _check_if_good_combo(particular_student_combo, students):
+                    # all_student_combos_for_time_pbar = tqdm(list(it.product(*all_student_combos)), desc="Going through student configurations", leave=False)
+                    for particular_student_combo in it.product(*filter_student_combos):
+                        if _check_is_good_combo(particular_student_combo, students, config):
                             good_combos.append((time_combo, particular_student_combo))
+                        # all_student_combos_for_time_pbar.update()
+        all_time_combos_pbar.update()
+
 
 
     # check all found combinations
@@ -105,8 +116,8 @@ def find_assignments(students, lab_groups, config):
 
 
 if __name__ == "__main__":
-    parser = argparser.ArgumentParser()
-    parser.add_arguments("--gen_data", action="store_true", help="Generate fake data (as opposed to loading real data)")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--gen_data", action="store_true", help="Generate fake data (as opposed to loading real data)")
     args = parser.parse_args()
 
     cfg = configs.AssignmentsConfig()

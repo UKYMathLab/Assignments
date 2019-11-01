@@ -36,6 +36,8 @@ class PreprocessingConfig:
         self.student_column_names = ["Timestamp", "Name", "Email",
                                      "Pref1", "Pref2", "Pref3", "Pref4", "Pref5",
                                      "M_times", "T_times", "W_times", "Th_times", "F_times"]
+        self.lab_group_column_names = ["Timestamp", "Name",
+                                       "M_times", "T_times", "W_times", "Th_times", "F_times"]
 
     @property
     def student_data_path(self):
