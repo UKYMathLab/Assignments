@@ -42,6 +42,22 @@ def _check_is_good_combo(student_combo: list, all_students: list, config) -> boo
     return (np.array(is_good)).all()
 
 
+def _write_good_combos(good_combos: list, file_name, lab_groups):
+
+    with open(file_name, "w") as f:
+        for i, (times, combos) in enumerate(good_combos):
+            title = f"Configuration {i}"
+            f.write(f"{title}\n" + ("="*len(title)) + "\n")
+
+            for j, (time, combo) in enumerate(zip(times, combos)):
+                f.write(f"{lab_groups[i].name} ({time}): ")
+
+                for stud in combo:
+                    f.write(f" {stud.name}")
+                f.write("\n")
+            f.write("\n"*4)
+
+
 def _score_configuration(combination, lab_groups):
     r"""Calculates the total unhappiness for a given configuration of lab groups.
 
@@ -54,7 +70,7 @@ def _score_configuration(combination, lab_groups):
 
     for i, lg_students in enumerate(combination):
         for stud in lg_students:
-            total_unhappiness += stud.preferences.index(lab_groups[i])
+            total_unhappiness += stud.preferences.index(lab_groups[i].name)
 
     return total_unhappiness
 
@@ -87,7 +103,7 @@ def find_assignments(students, lab_groups, config):
                 if sum(group_size_combo) == len(students):
                     all_student_combos = [it.combinations(lg_studs, r=group_size_combo[i]) for i, lg_studs in enumerate(lg_students)]   # list of lists of lists
                     filter_student_combos = [student_combo for student_combo in all_student_combos if set([stud for studs in student_combo for stud in studs]) == set(students)]
-                    print(len(filter_student_combos))
+                    # print(len(filter_student_combos))
                     # print(f"Total permutations: {len(list(all_student_combos[0]))} x {len(list(all_student_combos[1]))} x {len(list(all_student_combos[2]))} x {len(list(all_student_combos[3]))} x {len(list(all_student_combos[4]))}")
                     # check if every combination is compatible
                     # all_student_combos_for_time_pbar = tqdm(list(it.product(*all_student_combos)), desc="Going through student configurations", leave=False)
@@ -99,9 +115,8 @@ def find_assignments(students, lab_groups, config):
 
 
 
-    # check all found combinations
-    for times, combos in good_combos:
-        print(f"{times}   --->   {combos}\n")
+    # record all found combinations
+    _write_good_combos(good_combos, config.data_dir/"results.txt", lab_groups)
 
     # score based on happiness criteria
     scores = [_score_configuration(lg_configurations, lab_groups) for (_, lg_configurations) in good_combos]
