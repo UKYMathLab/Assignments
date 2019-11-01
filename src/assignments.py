@@ -23,28 +23,35 @@ def _check_is_good_combo(student_combo: list, all_students: list, config) -> boo
     (3) All lab groups have 3 <= num_members <= 5
     """
 
-    is_good = []
+    is_good = False
 
     # all students are accounted for and no student is present more than once
     if set([stud for studs in student_combo for stud in studs]) == set(all_students):
-        #occurrences = collections.Counter(*student_combo)
+        occurrences = collections.Counter(*student_combo)
 
         # all students occur only one time
         # if student is in more that one lab group for some tup, toss it out
         # there will eventually be a tuple with student in only one lab group
-        #if max(occurrences.values() == 1):
-        for lg_students in student_combo:
-            if len(lg_students) in config.group_sizes:
-                is_good.append(True)
-            else:
-                is_good.append(False)
+        if max(occurrences.values() == 1):
+            is_good = True
+        # for lg_students in student_combo:
+        #     if len(lg_students) in config.group_sizes:
+        #         is_good.append(True)
+        #     else:
+        #         is_good.append(False)
+
+    # result = (np.array(is_good)).all()
+    # print(result)
 
     return (np.array(is_good)).all()
 
 
-def _write_good_combos(good_combos: list, file_name, lab_groups):
+def _write_good_combos(good_combos: list, file_name, lab_groups, write_score: bool=False, score: int=0):
+    r"""Writes the given time/student configurations to a specified .txt file."""
 
     with open(file_name, "w") as f:
+        if write_score:
+            f.write(f"Unhappiness level: {score}\n")
         for i, (times, combos) in enumerate(good_combos):
             title = f"Configuration {i}"
             f.write(f"{title}\n" + ("="*len(title)) + "\n")
@@ -85,6 +92,7 @@ def find_assignments(students, lab_groups, config):
     cart_prod_lg_times = [list(lg.good_times.keys()) for lg in lab_groups]
     # for elem in cart_prod_lg_times: print(f"number of times: {len(elem)}   --->   {elem}\n")
     # for elem in cart_prod_lg_times: print(f"\n{elem}\n")
+    
     # I'm not sure if this product will work as coded (since input is list of lists)
     all_time_combos_pbar = tqdm(list(it.product(*cart_prod_lg_times)), desc="Going through time combinations")
     for time_combo in all_time_combos_pbar:
@@ -102,32 +110,32 @@ def find_assignments(students, lab_groups, config):
                 # checksum
                 if sum(group_size_combo) == len(students):
                     all_student_combos = [it.combinations(lg_studs, r=group_size_combo[i]) for i, lg_studs in enumerate(lg_students)]   # list of lists of lists
-                    filter_student_combos = [student_combo for student_combo in all_student_combos if set([stud for studs in student_combo for stud in studs]) == set(students)]
-                    # print(len(filter_student_combos))
+
+                    # filter_student_combos = [student_combo for student_combo in all_student_combos if set([stud for studs in student_combo for stud in studs]) == set(students)]
                     # print(f"Total permutations: {len(list(all_student_combos[0]))} x {len(list(all_student_combos[1]))} x {len(list(all_student_combos[2]))} x {len(list(all_student_combos[3]))} x {len(list(all_student_combos[4]))}")
+
                     # check if every combination is compatible
                     # all_student_combos_for_time_pbar = tqdm(list(it.product(*all_student_combos)), desc="Going through student configurations", leave=False)
-                    for particular_student_combo in it.product(*filter_student_combos):
+                    for particular_student_combo in it.product(*all_student_combos):
+                        # print("\n"*5)
+                        # for combo in particular_student_combo:
+                        #     for stud in combo:
+                        #         print(stud.name, end=" ")
+                        #     print()
                         if _check_is_good_combo(particular_student_combo, students, config):
                             good_combos.append((time_combo, particular_student_combo))
                         # all_student_combos_for_time_pbar.update()
         all_time_combos_pbar.update()
 
-
-
-    # record all found combinations
-    _write_good_combos(good_combos, config.preprocessing_config.data_dir/"results.txt", lab_groups)
-
-    # score based on happiness criteria
+    # record all found combinations and compute scores
+    _write_good_combos(good_combos, config.preprocess_config.data_dir/"all_configurations.txt", lab_groups)
     scores = [_score_configuration(lg_configurations, lab_groups) for (_, lg_configurations) in good_combos]
 
-    # get best matching(s) and print results
+    # get best matching(s) and record results
     min_score = min(scores)
     best_scores_idx = [i for i, score in enumerate(scores) if score == min_score]
-
-    print(f"Best Results (Unhappiness = {min_score})\n========================")
-    for idx in best_scores_idx:
-        print(f"{idx}:   {good_combos[idx][0]}   --->   {good_combos[idx][1]}\n")
+    best_combos = [good_combos[i] for i in best_scores_idx]
+    _write_good_combos(best_combos, config.preprocess_config.data_dir/"best_configurations.txt", lab_groups, write_score=True, score=min_score)
 
 
 if __name__ == "__main__":
