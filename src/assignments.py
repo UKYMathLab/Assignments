@@ -1,88 +1,116 @@
 import os
-import pandas as pd
-import numpy as np
+import argparse
+import itertools as it
+import collections
 
-from utils.configs import AssignmentsConfig
+import numpy as np
+import pandas as pd
+
+from utils import configs
+from utils.preprocessing import preprocess
 from Student import Student
 from LabGroup import LabGroup
-import utils.drivers as drivers
+import utils.drivers as driver
 
-################################################################################
 
-def _load_data(config) -> pd.DataFrame:
-    r"""Loads an Excel spreadsheet into a Pandas DatFrame.
+def _check_is_good_combo(student_combo: list, all_students: list, config) -> bool:
+    r"""Checks if a given combination is valid.
 
-    :param config:
-        contains higher-level information such as paths
-    :return data: pd.DataFrame
-        the loaded spreadsheet
+    Criteria to check:
+    (1) All students are accounted for
+    (2) No student appears more than once
+    (3) All lab groups have 3 <= num_members <= 5
     """
 
-    data = pd.read_excel(config.data_path, header=None, skiprows=1,
-                         names=config.column_names)
-    return data
+    is_good = []
+
+    # all students are accounted for and no student is present more than once
+    if set([*studs for studs in student_combo]) == set(all_students):
+        #occurrences = collections.Counter(*student_combo)
+
+        # all students occur only one time
+        # if student is in more that one lab group for some tup, toss it out
+        # there will eventually be a tuple with student in only one lab group
+        #if max(occurrences.values() == 1):
+        for lg_students in student_combo:
+            if len(lg_students) in config.group_sizes:
+                is_good.append(True)
+            else:
+                is_good.append(False)
+
+    return (np.array(is_good)).all()
 
 
-def main():
+def _score_configuration(combination, lab_groups):
+    r"""Calculates the total unhappiness for a given configuration of lab groups.
 
-    config = AssignmentsConfig()
-
-    data = _load_data(config)
-
-    lab_groups = [LabGroup() for _ in range(num_groups)]
-    students = [Student() for _ in range(num_students)]
-
-    # check if student and lab group are compatible
-    for student in students:
-        for group in lab_groups:
-            # times are compatible so add the student to the lab group
-            if len(person.available_times.intersect(group.available_times)) >= 1:
-                group.possible_group_members.append(student)
-
-    # find all compatible k-people groups for each group
-    for group in range(lab_groups):
-        three_combos = itertools.combinations(group.possible_group_members, 3)
-        three_student_combos = []
-        four_student_combos = []
-        five_student_combos = []
-
-        for combo in three_combos:
-            if len(combo[0].available_times.intersect(combo[1].available_times, combo[2].available_times)) >= 1:
-                three_student_combos.append(set(combo))
-
-        four_combos = itertools.combinations(group.possible_group_members, 4)
-        for combo in four_combos:
-            if len(combo[0].available_times.intersect(combo[1].available_times, combo[2].available_times, combo[3].available_times)) >= 1:
-                four_student_combos.append(set(combo))
-
-        five_combos = itertools.combinations(group.possible_group_members, 5)
-        for combo in five_combos:
-            if len(combo[0].available_times.intersect(combo[1].available_times, combo[2].available_times, combo[3].available_times, combo[4].available_times)) >= 1:
-                five_student_combos.append(set(combo))
-
-        # check that combinations are nonempty
-        if three_student_combos:
-            group.possible_groups[3] = three_student_combos
-        if four_student_combos:
-            group.possible_groups[4] = four_student_combos
-        if five_student_combos:
-            group.possible_groups[5] = five_student_combos
-
-    # generate all possible combinations of k-element groups
-    possible_sizes = [3, 4, 5]
-    all_group_size = [possible_sizes for i in range(5)]
+    Calculated as the sum of the indexes into each student's preference list of
+    their actual assignment.
+    """
 
 
+    # calculate the index offset for each student
+    total_unhappiness = 0
 
-    # find all combinations of groups that have have all students in them
+    for i, lg_students in enumerate(combination):
+        for stud in lg_students:
+            total_unhappiness += stud.preferences.index(lab_groups[i])
+
+    return total_unhappiness
 
 
+def find_assignments(students, lab_groups, config):
 
-    return data
+    # match students with lab group times for each lab group
+    for lg in lab_groups:
+        lg.find_members(students)
 
-################################################################################
+    good_combos = []
+    cart_prod_lg_times = [list(lg.good_times.keys()) for lg in lab_groups]
 
-if __name__ == '__main__':
-    data = main()
-    drivers.ExamineData(data).pause()
-    drivers.ShowSample(data).pause()
+    # I'm not sure if this product will work as coded (since input is list of lists)
+    for time_combo in enumerate(it.product(*cart_prod_lg_times)):
+        lg_students = [lg.good_times[time_combo[i]] for i, lg in enumerate(lab_groups)]
+        students_in_time_combo = [*studs for studs in lg_students]
+
+        # all students accounted for
+        if set(students_in_time_combo) == set(students):
+            for group_size_combo in it.combinations_with_replacement(config.group_sizes, r=len(lab_groups)):
+
+                # checksum
+                if sum(group_size_combo) == len(students):
+                    # list of lists of lists
+                    all_student_combos = [it.combinations(lg_studs[i], r=group_size_combo[i]) for i, lg_studs in enumerate(lg_students)]
+
+                    # check if every combination is compatible
+                    for particular_student_combo in it.product(*all_student_combos):
+                        if _check_if_good_combo(particular_student_combo, students):
+                            good_combos.append((time_combo, particular_student_combo))
+
+
+    # check all found combinations
+    for times, combos in good_combos:
+        print(f"{times}   --->   {combos}\n")
+
+    # score based on happiness criteria
+    scores = [_score_configuration(lg_configurations, lab_groups) for (_, lg_configurations) in good_combos]
+
+    # get best matching(s) and print results
+    min_score = min(scores)
+    best_scores_idx = [i for i, score in enumerate(scores) if score == min_score]
+
+    print(f"Best Results (Unhappiness = {min_score})\n========================")
+    for idx in best_scores_idx:
+        print(f"{idx}:   {good_combos[idx][0]}   --->   {good_combos[idx][1]}\n")
+
+
+if __name__ == "__main__":
+    parser = argparser.ArgumentParser()
+    parser.add_arguments("--gen_data", action="store_true", help="Generate fake data (as opposed to loading real data)")
+    args = parser.parse_args()
+
+    cfg = configs.AssignmentsConfig()
+
+    student_data, lab_group_data = preprocess(cfg.preprocess_config)
+
+    find_assignments(student_data, lab_group_data, cfg)
