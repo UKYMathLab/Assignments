@@ -116,7 +116,7 @@ def find_assignments(students, lab_groups, config):
 
 
     # record all found combinations
-    _write_good_combos(good_combos, config.data_dir/"results.txt", lab_groups)
+    _write_good_combos(good_combos, config.preprocessing_config.data_dir/"results.txt", lab_groups)
 
     # score based on happiness criteria
     scores = [_score_configuration(lg_configurations, lab_groups) for (_, lg_configurations) in good_combos]
@@ -131,10 +131,6 @@ def find_assignments(students, lab_groups, config):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--gen_data", action="store_true", help="Generate fake data (as opposed to loading real data)")
-    args = parser.parse_args()
-
     cfg = configs.AssignmentsConfig()
 
     student_data, lab_group_data = preprocess(cfg.preprocess_config)

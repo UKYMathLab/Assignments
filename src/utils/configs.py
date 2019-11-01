@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 
-def find_data_dir(path: Path):
+def find_data_dir(path: Path, desired_dir="data"):
     # find data directory by searching hierarchy of directories
     # should find "data" directory
     max_levels = 3
@@ -10,8 +10,8 @@ def find_data_dir(path: Path):
     i = 0
     while i < max_levels:
         # "data" directory is found
-        if path / "data" in path.iterdir():
-            path = path / "data"
+        if path / desired_dir in path.iterdir():
+            path = path / desired_dir
             i = max_levels + 1   # condition found, break out of while
         # move up a directory
         else:
@@ -28,7 +28,7 @@ def find_data_dir(path: Path):
 class PreprocessingConfig:
     def __init__(self):
         # paths
-        self.data_dir = find_data_dir(Path().cwd())
+        self.data_dir = find_data_dir(Path().cwd(), desired_dir="data")
         self.student_data_file_name = "FakeStudentData.csv"
         self.lab_group_data_file_name = "FakeLabGroupData.csv"
 
