@@ -1,0 +1,294 @@
+ % Gemini theme
+% https://github.com/anishathalye/gemini
+
+\documentclass[final]{beamer}
+
+% Packages
+% ====================
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{comment}
+\usepackage[size=custom,width=120,height=72,scale=1.0]{beamerposter}
+\usetheme{gemini}
+\usecolortheme{gemini}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{mathrsfs}
+\usepackage{tabularx}
+\usepackage{color, soul}
+\usepackage{todonotes}
+\usepackage{caption}
+%\usepackage[outercaption]{sidecap} 
+\usepackage{amsmath, amssymb, amsthm, wasysym,todonotes,bm}
+\usepackage[margin=3cm]{geometry}
+
+% just kt things
+\newcommand\inner[2]{\langle #1, #2 \rangle}
+\newcommand\complexconj[1]{ \overline{#1}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+%\newcommand{\C}{\mathbb{C}}
+\newcommand{\Sp}{\text{Sp}}
+\newcommand{\Mod}{\text{Mod}}
+
+
+
+
+% ====================
+% Lengths
+% ====================
+
+% If you have N columns, choose \sepwidth and \colwidth such that
+% (N+1)*\sepwidth + N*\colwidth = \paperwidth
+\newlength{\sepwidth}
+\newlength{\colwidth}
+\setlength{\sepwidth}{0.025\paperwidth}
+\setlength{\colwidth}{0.3\paperwidth}
+
+\newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
+
+%\definecolor{forestgreen}{rgb}{0.0, 0.27, 0.13}
+%\setbeamercolor{block title}{bg=blue,fg=white}
+
+% ====================
+% Title
+% ====================
+
+\title{On Congruence Subgroups of the Braid Group}
+
+\author{Jessica Appel\inst{1}, Katie Gravel\inst{2}, Annie Holden\inst{3}}
+
+\institute[shortinst]{\inst{1} University of Kentucky \samelineand \inst{2} Massachusetts Institute of Technology \samelineand \inst{3} Colby College}
+
+% ====================
+% Body
+% ====================
+
+\begin{document}
+
+\begin{frame}[t]
+\begin{columns}[t]
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+%\iffalse
+ \begin{block}{\begin{huge}
+    Braids
+  \end{huge}} 
+  
+\begin{huge}
+\vspace*{5mm} \emph{Goal:} Understand the structure of congruence subgroups of the braid group.
+\end{huge}
+  \end{block}
+ %\fi
+ 
+\begin{figure}
+    \includegraphics[width=37.5cm]{braid_relation_final.pdf}
+    %\captionsetup{labelformat = empty}
+    %\caption{\begin{huge} Braid Relation \end{huge}}
+\end{figure} 
+%\begin{figure}
+ %   \includegraphics[height=3in]{PureBraid1.pdf}
+  %  \caption{}
+%\end{figure} 
+%\vspace*{-55mm}
+
+\vspace{20mm}
+\begin{figure}
+    \includegraphics[width=35cm]{pure_braids_final.pdf}
+\end{figure} 
+
+
+\begin{figure}
+    \includegraphics[width=25cm]{level_four_braid_final.pdf}
+\end{figure} 
+
+\end{column}
+
+\separatorcolumn
+
+
+\begin{column}{\colwidth} 
+\begin{block}{\begin{huge}
+    Integral Burau Representation
+  \end{huge}} 
+
+\begin{huge} \vspace*{-25mm}
+\begin{align*}
+    \rho_{-1}: B_n &\rightarrow GL(n, \Z)\\
+    \sigma_i &\mapsto I_{i-1} \oplus \begin{bmatrix}
+2 & -1 \\
+1 & 0 
+\end{bmatrix} \oplus I_{n-i-1}
+\end{align*}
+\vspace*{-5mm}
+$r_N$ is the usual mod $N$ reduction map
+\vspace*{3mm}
+$$B_n[N]=ker(r_N \circ \rho_{-1})$$
+\end{huge}
+  \end{block}
+
+\begin{block}
+  {\begin{huge}
+    \vspace*{5mm} Problem I: Generating Sets
+  \end{huge}} \begin{huge} 
+  
+ \vspace*{5mm} \emph{Question}: What is a natural generating set for $B_n[4]$? How big is it?
+\end{huge} 
+
+\begin{huge}
+
+Margalit and Kordek: Size lower bounded by 
+  $${n\choose 2}+3{n\choose 3}+3{n\choose 4}\sim \text{O}(n^4)$$
+ 
+ \end{huge}
+
+
+\begin{huge}
+
+Schreier's method $\rightsquigarrow$ exponential generating set
+ 
+Use recurrence relation to reduce generating set
+
+
+\vspace*{-1mm}
+{\bf {\begin{huge} Theorem. \end{huge}}}  \begin{Huge}
+$${ \text{\# generators of} \; B_n[4]\sim \text{O}(n^5)}$$
+\end{Huge}
+  
+
+
+\end{huge}
+\end{block} 
+
+\begin{block}{\begin{huge} Acknowledgements \end{huge}}
+
+\begin{huge}
+ We would like to thank Dr.\@ Wade Bloomquist, Dr. Dan Margalit, Georgia Tech, and the National Science Foundation.
+ \end{huge}
+  \end{block}
+\end{column}
+
+
+  \separatorcolumn
+
+\begin{column}{\colwidth}
+
+ \vspace*{-3mm} \begin{block}{
+  \begin{huge}
+    Problem II: \bm{$PB_n^\ell$} and \bm{$B_n[2\ell]$}
+  \end{huge}} 
+
+\begin{huge} \vspace*{5mm}  \emph{Question:} What is the relationship between $PB_n^\ell$ and $B_n[2\ell]$ for varying $\ell$?
+\end{huge}
+
+\vspace*{-10mm} 
+\begin{huge} \begin{itemize}
+\item[]Brendle and Margalit: $PB_n^2 = B_n[4]$
+\end{itemize} 
+
+\vspace*{-7mm}
+{ \bf{\begin{huge} Theorem. \end{huge}}}
+
+\vspace*{-7mm}
+\begin{itemize} \begin{huge}
+  \item[] For $\ell = 2^k$, $PB_n^\ell \subset B_n[2\ell]$
+  
+\item[] For $\ell = 6,10,12$ or $\ell$ odd, $PB_n^\ell \not\subset B_n[2\ell]$
+\end{huge}
+\end{itemize}
+\vspace*{-7mm}
+
+{\bf{\begin{huge} Conjecture. \end{huge}}}
+\vspace*{-7mm}
+\begin{huge}
+\begin{itemize}
+  
+\item[] $\; \ell = 2^k \iff PB_n^\ell \subset B_n[2\ell]$
+
+\end{itemize}
+\end{huge}
+
+\end{huge}
+
+\end{block}
+
+  \begin{block}{
+  \begin{huge}
+  \vspace*{5mm} 
+    Problem III:   Quotients
+  \end{huge}} 
+ 
+\begin{huge} \vspace*{5mm}  \emph{Question:} What can we say about quotients of Burau levels? \end{huge}
+
+\vspace*{-7mm}
+\begin{huge}
+  \begin{itemize}
+  \item[] Artin: $B_n / PB_n \cong S_n$
+  
+  \item[] Stylianakis: $B_n[p] / B_n[2p] \cong S_n$ for $p$ prime 
+  \end{itemize}
+    \end{huge} \vspace*{-7mm}
+
+{\bf{ \begin{huge} Theorem. \end{huge}} }
+\begin{huge}
+\vspace*{-7mm}
+\begin{itemize} 
+\item[] $B_n[\ell] / B_n[2\ell] \cong S_n$ for odd $\ell$
+
+        
+\item[] $B_n[\ell] / B_n[2\ell] \cong (\Z /2\Z)^{{n\choose 2}}$ for even $\ell$
+  
+\end{itemize}
+\end{huge}
+
+  \end{block} 
+\begin{Large}
+%\vspace*{-15mm}
+
+ 
+
+
+
+%  \begin{block}{References}
+%\begin{thebibliography}{}
+%\bibitem{}
+%  Brendle, Tara and Margalit, Dan. The Level Four Braid Group. 2014. %https://arxiv.org/abs/1410.7416.
+  
+%\bibitem{}
+%  Karoske, Yvonne. Reidemeister-Schreier Procedure using Grobner Bases Techniques. 2013. 
+  %http://cocoa.dima.unige.it/conference/cocoa2013/posters/YvonneKaroske.pdf.
+  
+%\bibitem{}
+%  Stylianakis, Charalampos. Congruence Subgroups of the Braid Group. 2016. %https://arxiv.org/abs/1609.05673.  
+ % \end{thebibliography}
+
+
+    %\nocite{*}
+    %\footnotesize{\bibliographystyle{plain}\bibliography{poster}}
+   
+  %\end{block}
+  
+\end{Large}
+
+
+\begin{figure}
+    \includegraphics[height=2.5in]{schoolofmathlogo.png}
+\hspace{1cm}
+    \includegraphics[height=2.5in]{NSFLogo.png}
+\end{figure} 
+
+\end{column}
+
+\separatorcolumn
+\end{columns}
+\end{frame}
+
+\end{document}
