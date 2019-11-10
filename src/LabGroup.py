@@ -9,15 +9,13 @@ class LabGroup:
         self.possible_group_members = []
         self.actual_group_members = []
 
-        self.possible_groups = {3: [], 4: [], 5: []}
-
     def find_members(self, students):
         r"""Finds compatible students based on time."""
 
         for time in self.available_times:
             for student in students:
                 # check if intersection is nonempty
-                if len(self.available_times.intersection(student.available_times)) > 0:
+                if time in student.available_times:
                     # check if key is already in dictionary
                     if time not in self.good_times:
                         self.good_times[time] = set()
