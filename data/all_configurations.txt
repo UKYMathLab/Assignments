@@ -1,0 +1,14 @@
+Configuration 1
+===============
+Group A (M 930-1030):  3 1 2
+
+
+
+
+Configuration 2
+===============
+Group A (M 9-10):  3 1 2
+
+
+
+
