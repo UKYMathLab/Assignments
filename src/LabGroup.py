@@ -15,7 +15,7 @@ class LabGroup:
         for time in self.available_times:
             for student in students:
                 # check if intersection is nonempty
-                if (time in student.available_times) and (self.name in student.preferences[:3]):
+                if (time in student.available_times):
                     # check if key is already in dictionary
                     if time not in self.good_times:
                         self.good_times[time] = set()
