@@ -1,0 +1,155 @@
+Unhappiness level: 12
+Configuration 1
+===============
+Group A (T 330-430):  8 7 13 1
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  17 20 2 4
+Group D (R 1230-130):  5 6 11 3
+Group E (F 3-4):  9 10 16 18
+
+
+
+
+Configuration 2
+===============
+Group A (T 330-430):  8 7 13 1
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  17 20 2 4
+Group D (R 1230-130):  5 6 11 3
+Group E (F 330-430):  18 9 16 10
+
+
+
+
+Configuration 3
+===============
+Group A (T 330-430):  8 7 13 1
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  20 16 2 4
+Group D (R 1230-130):  5 6 11 3
+Group E (W 3-4):  17 18 9 10
+
+
+
+
+Configuration 4
+===============
+Group A (T 330-430):  8 7 13 1
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  17 20 2 4
+Group D (R 1230-130):  5 6 11 3
+Group E (W 330-430):  18 9 16 10
+
+
+
+
+Configuration 5
+===============
+Group A (T 330-430):  8 7 13 1
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  17 20 2 4
+Group D (R 12-1):  5 6 11 3
+Group E (F 3-4):  9 10 16 18
+
+
+
+
+Configuration 6
+===============
+Group A (T 330-430):  8 7 13 1
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  17 20 2 4
+Group D (R 12-1):  5 6 11 3
+Group E (F 330-430):  18 9 16 10
+
+
+
+
+Configuration 7
+===============
+Group A (T 330-430):  8 7 13 1
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  20 16 2 4
+Group D (R 12-1):  5 6 11 3
+Group E (W 3-4):  17 18 9 10
+
+
+
+
+Configuration 8
+===============
+Group A (T 330-430):  8 7 13 1
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  17 20 2 4
+Group D (R 12-1):  5 6 11 3
+Group E (W 330-430):  18 9 16 10
+
+
+
+
+Configuration 9
+===============
+Group A (T 2-3):  8 17 7 13
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  20 2 1 4
+Group D (R 1230-130):  5 6 11 3
+Group E (F 3-4):  9 10 16 18
+
+
+
+
+Configuration 10
+================
+Group A (T 2-3):  8 17 7 13
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  20 2 1 4
+Group D (R 1230-130):  5 6 11 3
+Group E (F 330-430):  18 9 16 10
+
+
+
+
+Configuration 11
+================
+Group A (T 2-3):  8 17 7 13
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  20 2 1 4
+Group D (R 1230-130):  5 6 11 3
+Group E (W 330-430):  18 9 16 10
+
+
+
+
+Configuration 12
+================
+Group A (T 2-3):  8 17 7 13
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  20 2 1 4
+Group D (R 12-1):  5 6 11 3
+Group E (F 3-4):  9 10 16 18
+
+
+
+
+Configuration 13
+================
+Group A (T 2-3):  8 17 7 13
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  20 2 1 4
+Group D (R 12-1):  5 6 11 3
+Group E (F 330-430):  18 9 16 10
+
+
+
+
+Configuration 14
+================
+Group A (T 2-3):  8 17 7 13
+Group B (M 130-230):  14 15 12 19
+Group C (W 12-1):  20 2 1 4
+Group D (R 12-1):  5 6 11 3
+Group E (W 330-430):  18 9 16 10
+
+
+
+

@@ -29,8 +29,8 @@ class PreprocessingConfig:
     def __init__(self):
         # paths
         self.data_dir = find_data_dir(Path().cwd(), desired_dir="data")
-        self.student_data_file_name = "FakeStudentSimple.csv"
-        self.lab_group_data_file_name = "FakeLabSimple.csv"
+        self.student_data_file_name = "RealishStudentData.csv"
+        self.lab_group_data_file_name = "FakeLabGroupData.csv"
 
         # formatting data
         self.student_column_names = ["Timestamp", "Name", "Email",

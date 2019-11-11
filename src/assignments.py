@@ -114,11 +114,11 @@ def find_assignments(students, lab_groups, config):
                     for particular_student_combo in it.product(*all_student_combos):
 
                         if _check_is_good_combo(particular_student_combo, students, config):
-                            print("\n"*5)
-                            for combo in particular_student_combo:
-                                for stud in combo:
-                                    print(stud.name, end=" ")
-                                print()
+                            # print("\n"*5)
+                            # for combo in particular_student_combo:
+                            #     for stud in combo:
+                            #         print(stud.name, end=" ")
+                            #     print()
                             good_combos.append((time_combo, particular_student_combo))
                         # all_student_combos_for_time_pbar.update()
                         # all_student_combos_for_time_pbar.refresh()
