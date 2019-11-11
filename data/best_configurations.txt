@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Unhappiness level: 12
 Configuration 1
 ===============
@@ -6,12 +7,19 @@ Group B (M 130-230):  14 15 12 19
 Group C (W 12-1):  17 20 2 4
 Group D (R 1230-130):  5 6 11 3
 Group E (F 3-4):  9 10 16 18
+=======
+Unhappiness level: 1
+Configuration 1
+===============
+Group A (M 930-1030):  3 1 2
+>>>>>>> ef4cadacecec1d3b71ab10f738acae4cd1b70a79
 
 
 
 
 Configuration 2
 ===============
+<<<<<<< HEAD
 Group A (T 330-430):  8 7 13 1
 Group B (M 130-230):  14 15 12 19
 Group C (W 12-1):  17 20 2 4
@@ -149,6 +157,9 @@ Group B (M 130-230):  14 15 12 19
 Group C (W 12-1):  20 2 1 4
 Group D (R 12-1):  5 6 11 3
 Group E (W 330-430):  18 9 16 10
+=======
+Group A (M 9-10):  3 1 2
+>>>>>>> ef4cadacecec1d3b71ab10f738acae4cd1b70a79
 
 
 

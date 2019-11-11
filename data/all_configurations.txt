@@ -1,16 +1,21 @@
 Configuration 1
 ===============
+<<<<<<< HEAD
 Group A (T 330-430):  8 12 7
 Group B (F 1-2):  1 14 13
 Group C (W 12-1):  17 20 2 4
 Group D (R 1230-130):  5 6 11 3 19
 Group E (F 330-430):  18 15 9 16 10
+=======
+Group A (M 930-1030):  3 1 2
+>>>>>>> ef4cadacecec1d3b71ab10f738acae4cd1b70a79
 
 
 
 
 Configuration 2
 ===============
+<<<<<<< HEAD
 Group A (T 330-430):  8 12 7
 Group B (F 1-2):  1 14 13
 Group C (W 12-1):  17 20 2 4
@@ -156656,6 +156661,9 @@ Group B (M 11-12):  20 13 1 4
 Group C (T 1030-1130):  14 12 2 10
 Group D (R 12-1):  5 6 11 3
 Group E (W 330-430):  18 15 9 16
+=======
+Group A (M 9-10):  3 1 2
+>>>>>>> ef4cadacecec1d3b71ab10f738acae4cd1b70a79
 
 
 
