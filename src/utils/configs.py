@@ -30,7 +30,7 @@ class PreprocessingConfig:
         # paths
         self.data_dir = find_data_dir(Path().cwd(), desired_dir="data")
         self.student_data_file_name = "RealishStudentData.csv"
-        self.lab_group_data_file_name = "FakeLabGroupData.csv"
+        self.lab_group_data_file_name = "RealishFacultyData.csv"
 
         # formatting data
         self.student_column_names = ["Timestamp", "Name", "Email",

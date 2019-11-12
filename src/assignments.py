@@ -142,3 +142,8 @@ if __name__ == "__main__":
     student_data, lab_group_data = preprocess(cfg.preprocess_config)
 
     find_assignments(student_data, lab_group_data, cfg)
+
+    with open(cfg.preprocess_config.data_dir/"finished.txt", "w") as finish_file:
+        finish_file.write("Finished!")
+
+
