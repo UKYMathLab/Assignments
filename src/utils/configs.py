@@ -29,8 +29,10 @@ class PreprocessingConfig:
     def __init__(self):
         # paths
         self.data_dir = find_data_dir(Path().cwd(), desired_dir="data")
+        self.student_data_subdir = "raw_data"
+        self.lab_group_data_subdir = "fake_data"
         self.student_data_file_name = "RealishStudentData.csv"
-        self.lab_group_data_file_name = "RealishFacultyData.csv"
+        self.lab_group_data_file_name = "FakeLabGroupData.csv"
 
         # formatting data
         self.student_column_names = ["Timestamp", "Name", "Email",
@@ -41,11 +43,19 @@ class PreprocessingConfig:
 
     @property
     def student_data_path(self):
-        return self.data_dir / self.student_data_file_name
+        path = self.data_dir / self.student_data_subdir / self.student_data_file_name
+        if not (path.exists() and path.is_file()):
+            raise FileNotFoundError(path.as_posix())
+
+        return path
 
     @property
     def lab_group_data_path(self):
-        return self.data_dir / self.lab_group_data_file_name
+        path = self.data_dir / self.lab_group_data_subdir / self.lab_group_data_file_name
+        if not (path.exists() and path.is_file()):
+            raise FileNotFoundError(path.as_posix())
+
+        return path
 
 
 class AssignmentsConfig:
