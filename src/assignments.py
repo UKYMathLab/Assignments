@@ -74,18 +74,8 @@ def find_assignments(students, lab_groups, config):
     for lg in lab_groups:
         lg.find_members(students)
 
-        # print(f"{lg.name}\n========")
-        # for time, studs in lg.good_times.items():
-        #     print(f"{time}:", end=" ")
-        #     for stud in studs:
-        #         print(f"{stud.name}", end=" ")
-        #     print()
-        # print("\n"*3)
-
     good_combos = []
     cart_prod_lg_times = [list(lg.good_times.keys()) for lg in lab_groups]
-    # for elem in cart_prod_lg_times: print(f"number of times: {len(elem)}   --->   {elem}\n")
-    # for elem in cart_prod_lg_times: print(f"\n{elem}\n")
 
     # I'm not sure if this product will work as coded (since input is list of lists)
     all_time_combos_pbar = tqdm(list(it.product(*cart_prod_lg_times)), desc="Going through time combinations")
@@ -93,35 +83,18 @@ def find_assignments(students, lab_groups, config):
         lg_students = [lg.good_times[time_combo[i]] for i, lg in enumerate(lab_groups)]     # list of sets of students
         students_in_time_combo = [stud for studs in lg_students for stud in studs]
 
-        # for i, elem in enumerate(students_in_time_combo): print(i, elem.name)
-        # print()
-        # for i, elem in enumerate(set(students_in_time_combo)): print(i, elem.name)
-
         # all students accounted for
         if set(students_in_time_combo) == set(students):
             for group_size_combo in it.combinations_with_replacement(config.group_sizes, r=len(lab_groups)):
-                # print(f"{group_size_combo} =?= {len(students)}")
-
                 # checksum
                 if sum(group_size_combo) == len(students):
-                    # ALL GOOD ===========================================================================================
-
                     all_student_combos = [it.combinations(lg_studs, r=group_size_combo[i]) for i, lg_studs in enumerate(lg_students)]   # list of lists of lists
-                    # print(f"Total permutations: {len(list(all_student_combos[0]))} x {len(list(all_student_combos[1]))} x {len(list(all_student_combos[2]))} x {len(list(all_student_combos[3]))} x {len(list(all_student_combos[4]))}")
 
                     # check if every combination is compatible
-                    # all_student_combos_for_time_pbar = tqdm(list(it.product(*all_student_combos)), desc="Going through student configurations", leave=False)
                     for particular_student_combo in it.product(*all_student_combos):
 
                         if _check_is_good_combo(particular_student_combo, students, config):
-                            # print("\n"*5)
-                            # for combo in particular_student_combo:
-                            #     for stud in combo:
-                            #         print(stud.name, end=" ")
-                            #     print()
                             good_combos.append((time_combo, particular_student_combo))
-                        # all_student_combos_for_time_pbar.update()
-                        # all_student_combos_for_time_pbar.refresh()
         all_time_combos_pbar.update()
         all_time_combos_pbar.refresh()
 
@@ -145,5 +118,3 @@ if __name__ == "__main__":
 
     with open(cfg.preprocess_config.data_dir/"finished.txt", "w") as finish_file:
         finish_file.write("Finished!")
-
-
