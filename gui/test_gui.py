@@ -5,6 +5,8 @@ import sys
 from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
+import itertools as it
+from collections import Counter, defaultdict
 
 import numpy as np
 import pandas as pd
@@ -14,7 +16,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from matplotlib.figure import Figure
 import matplotlib.animation as animation
 from matplotlib import style
 style.use("ggplot")
@@ -100,42 +101,76 @@ class StudentStatsPage(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="This is the start page", font=("Verdana",12))
-        label.pack(pady=10, padx=10)
+        # label = tk.Label(self, text="This is the start page", font=("Verdana",12))
+        # label.pack(pady=10, padx=10)
 
         button1 = ttk.Button(self, text="Back to Home",
                            command=lambda: controller.show_frame(StartPage))
         button1.pack(pady=10, padx=10)
 
         self.students = controller.students
-        f = self.plot_times()
+        self.plot_times()
 
-        canvas = FigureCanvasTkAgg(f, self)
+    def plot_times(self):
+        """Plots the frequency of times and preferences for lab groups of students."""
+        ALL_TIMES = ["M 8-9", "M 830-930", "M 9-10", "M 930-1030", "M 10-11",
+                     "M 1030-1130", "M 11-12", "M 1130-1230", "M 12-1", "M 1230-130",
+                     "M 1-2", "M 130-230", "M 2-3", "M 230-330", "M 3-4",
+                     "M 330-430", "M 4-5",
+                     "T 8-9", "T 830-930", "T 9-10", "T 930-1030", "T 10-11",
+                     "T 1030-1130", "T 11-12", "T 1130-1230", "T 12-1", "T 1230-130",
+                     "T 1-2", "T 130-230", "T 2-3", "T 230-330", "T 3-4",
+                     "T 330-430", "T 4-5",
+                     "W 8-9", "W 830-930", "W 9-10", "W 930-1030", "W 10-11",
+                     "W 1030-1130", "W 11-12", "W 1130-1230", "W 12-1", "W 1230-130",
+                     "W 1-2", "W 130-230", "W 2-3", "W 230-330", "W 3-4",
+                     "W 330-430", "W 4-5",
+                     "R 8-9", "R 830-930", "R 9-10", "R 930-1030", "R 10-11",
+                     "R 1030-1130", "R 11-12", "R 1130-1230", "R 12-1", "R 1230-130",
+                     "R 1-2", "R 130-230", "R 2-3", "R 230-330", "R 3-4",
+                     "R 330-430", "R 4-5",
+                     "F 8-9", "F 830-930", "F 9-10", "F 930-1030", "F 10-11",
+                     "F 1030-1130", "F 11-12", "F 1130-1230", "F 12-1", "F 1230-130",
+                     "F 1-2", "F 130-230", "F 2-3", "F 230-330", "F 3-4",
+                     "F 330-430", "F 4-5"]
+
+        fig = plt.Figure(figsize=(15,8), dpi=100)
+        ax = fig.add_subplot(111)
+
+        # initialize counts
+        all_time_counts = defaultdict(int, {time:0 for time in ALL_TIMES})
+
+        # count the frequency of times and add to existing counter (defaultdict)
+        times = [list(student.available_times) for student in self.students]
+        # https://stackoverflow.com/questions/952914/how-to-make-a-flat-list-out-of-list-of-lists
+        times = list(it.chain.from_iterable(times))
+        time_counts = Counter(times)
+        for time, count in time_counts.items():
+            all_time_counts[time] += count
+
+        all_times = [time for time in all_time_counts.keys()]
+        all_counts = [count for count in all_time_counts.values()]
+        xs = np.arange(len(ALL_TIMES))
+        ys = np.arange(max(all_counts)+1)
+
+        # plot parameters
+        ax.bar(xs, all_counts, align="center")
+        ax.set_title("Student Availability")
+        ax.set_xlabel("Available Times")
+        ax.set_ylabel("Number of Students")
+        ax.set_xticks(xs)
+        ax.set_xticklabels(ALL_TIMES)
+        ax.set_yticks(ys)
+        ax.xaxis.set_tick_params(rotation=90)
+
+        fig.tight_layout()  # not sure where to put this
+        canvas = FigureCanvasTkAgg(fig, self)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
         toolbar = NavigationToolbar2Tk(canvas, self)
         toolbar.update()
         canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-
-    def plot_times(self):
-        """Plots the frequency of times and preferences for lab groups of students."""
-
-        fig, axs = plt.subplots(1, 2, sharey=False, tight_layout=True)
-
-        times = [student.available_times for student in self.students]
-        unique_times, time_counts = np.unique(set.union(*times), return_counts=True)
-        time_xs = np.arange(time_counts)
-        axs[0].bar(time_xs, time_counts, align="center")
-        axs[0].xticks(time_xs, unique_times)
-
-        # lab_groups = [student.preferences for student in self.students]
-        # unique_lab_groups = np.unique([].extend(lab_groups))
-        #
-        # axs[1].bar(time_xs, time_counts, align="center")
-        # axs[1].xticks(time_xs, unique_times)
-
-        return fig
 
 
 class LabGroupStatsPage(tk.Frame):
