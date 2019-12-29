@@ -18,7 +18,7 @@ matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.animation as animation
 from matplotlib import style
-style.use("ggplot")
+# style.use("ggplot")
 
 sys.path.append((Path().cwd().parent/"src").as_posix())
 from utils.configs import PreprocessingConfig
@@ -113,32 +113,39 @@ class StudentStatsPage(tk.Frame):
 
     def plot_times(self):
         """Plots the frequency of times and preferences for lab groups of students."""
-        ALL_TIMES = ["M 8-9", "M 830-930", "M 9-10", "M 930-1030", "M 10-11",
-                     "M 1030-1130", "M 11-12", "M 1130-1230", "M 12-1", "M 1230-130",
-                     "M 1-2", "M 130-230", "M 2-3", "M 230-330", "M 3-4",
-                     "M 330-430", "M 4-5",
-                     "T 8-9", "T 830-930", "T 9-10", "T 930-1030", "T 10-11",
-                     "T 1030-1130", "T 11-12", "T 1130-1230", "T 12-1", "T 1230-130",
-                     "T 1-2", "T 130-230", "T 2-3", "T 230-330", "T 3-4",
-                     "T 330-430", "T 4-5",
-                     "W 8-9", "W 830-930", "W 9-10", "W 930-1030", "W 10-11",
-                     "W 1030-1130", "W 11-12", "W 1130-1230", "W 12-1", "W 1230-130",
-                     "W 1-2", "W 130-230", "W 2-3", "W 230-330", "W 3-4",
-                     "W 330-430", "W 4-5",
-                     "R 8-9", "R 830-930", "R 9-10", "R 930-1030", "R 10-11",
-                     "R 1030-1130", "R 11-12", "R 1130-1230", "R 12-1", "R 1230-130",
-                     "R 1-2", "R 130-230", "R 2-3", "R 230-330", "R 3-4",
-                     "R 330-430", "R 4-5",
-                     "F 8-9", "F 830-930", "F 9-10", "F 930-1030", "F 10-11",
-                     "F 1030-1130", "F 11-12", "F 1130-1230", "F 12-1", "F 1230-130",
-                     "F 1-2", "F 130-230", "F 2-3", "F 230-330", "F 3-4",
-                     "F 330-430", "F 4-5"]
+        ALL_TIMES = ["8-9", "830-930", "9-10", "930-1030", "10-11",
+                     "1030-1130", "11-12", "1130-1230", "12-1", "1230-130",
+                     "1-2", "130-230", "2-3", "230-330", "3-4",
+                     "330-430", "4-5"]
+        ALL_DAYS = {"M":"Monday", "T":"Tuesday", "W":"Wednesday", "R":"Thursday", "F":"Friday"}
+
+        all_formatted_times = [" ".join([day, time]) for day in ALL_DAYS.keys() for time in ALL_TIMES]
+        # ALL_TIMES = ["M 8-9", "M 830-930", "M 9-10", "M 930-1030", "M 10-11",
+        #              "M 1030-1130", "M 11-12", "M 1130-1230", "M 12-1", "M 1230-130",
+        #              "M 1-2", "M 130-230", "M 2-3", "M 230-330", "M 3-4",
+        #              "M 330-430", "M 4-5",
+        #              "T 8-9", "T 830-930", "T 9-10", "T 930-1030", "T 10-11",
+        #              "T 1030-1130", "T 11-12", "T 1130-1230", "T 12-1", "T 1230-130",
+        #              "T 1-2", "T 130-230", "T 2-3", "T 230-330", "T 3-4",
+        #              "T 330-430", "T 4-5",
+        #              "W 8-9", "W 830-930", "W 9-10", "W 930-1030", "W 10-11",
+        #              "W 1030-1130", "W 11-12", "W 1130-1230", "W 12-1", "W 1230-130",
+        #              "W 1-2", "W 130-230", "W 2-3", "W 230-330", "W 3-4",
+        #              "W 330-430", "W 4-5",
+        #              "R 8-9", "R 830-930", "R 9-10", "R 930-1030", "R 10-11",
+        #              "R 1030-1130", "R 11-12", "R 1130-1230", "R 12-1", "R 1230-130",
+        #              "R 1-2", "R 130-230", "R 2-3", "R 230-330", "R 3-4",
+        #              "R 330-430", "R 4-5",
+        #              "F 8-9", "F 830-930", "F 9-10", "F 930-1030", "F 10-11",
+        #              "F 1030-1130", "F 11-12", "F 1130-1230", "F 12-1", "F 1230-130",
+        #              "F 1-2", "F 130-230", "F 2-3", "F 230-330", "F 3-4",
+        #              "F 330-430", "F 4-5"]
 
         fig = plt.Figure(figsize=(15,8), dpi=100)
         ax = fig.add_subplot(111)
 
         # initialize counts
-        all_time_counts = defaultdict(int, {time:0 for time in ALL_TIMES})
+        all_time_counts = defaultdict(int, {time:0 for time in all_formatted_times})
 
         # count the frequency of times and add to existing counter (defaultdict)
         times = [list(student.available_times) for student in self.students]
@@ -148,20 +155,28 @@ class StudentStatsPage(tk.Frame):
         for time, count in time_counts.items():
             all_time_counts[time] += count
 
-        all_times = [time for time in all_time_counts.keys()]
+        # all_times = [time for time in all_time_counts.keys()]
         all_counts = [count for count in all_time_counts.values()]
         xs = np.arange(len(ALL_TIMES))
-        ys = np.arange(max(all_counts)+1)
+        ys = np.arange(len(ALL_DAYS))
 
         # plot parameters
-        ax.bar(xs, all_counts, align="center")
+        # ax.bar(xs, all_counts, align="center")
         ax.set_title("Student Availability")
         ax.set_xlabel("Available Times")
-        ax.set_ylabel("Number of Students")
+        ax.set_ylabel("Day of the Week")
         ax.set_xticks(xs)
         ax.set_xticklabels(ALL_TIMES)
         ax.set_yticks(ys)
+        ax.set_yticklabels(ALL_DAYS.values())
         ax.xaxis.set_tick_params(rotation=90)
+
+        # https://stackoverflow.com/questions/14777066/matplotlib-discrete-colorbar
+        cmap = matplotlib.cm.get_cmap("viridis", max(all_counts)+1)
+        im = ax.imshow(np.array(all_counts).reshape( (len(ALL_DAYS), len(ALL_TIMES)) ),
+                       cmap=cmap, vmin=-0.5, vmax=max(all_counts)+0.5)
+        cbar = fig.colorbar(im, ax=ax, ticks=np.arange(max(all_counts)+1))
+        cbar.set_label("Number of Students", rotation=270)
 
         fig.tight_layout()  # not sure where to put this
         canvas = FigureCanvasTkAgg(fig, self)
