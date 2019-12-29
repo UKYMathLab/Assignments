@@ -6,7 +6,7 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
 import itertools as it
-from collections import Counter, defaultdict
+from collections import Counter
 
 import numpy as np
 import pandas as pd
@@ -81,20 +81,25 @@ class StartPage(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+
+        # text
         label = tk.Label(self, text="This is the start page", font=("Verdana",12))
-        label.pack(pady=10, padx=10)
 
-        button1 = ttk.Button(self, text="Student Statistics",
-                           command=lambda: controller.show_frame(StudentStatsPage))
-        button1.pack(pady=10, padx=10)
-
-        button2 = ttk.Button(self, text="Lab Group Statistics",
+        # buttons
+        student_stat_button = ttk.Button(self, text="Student Statistics",
+                             command=lambda: controller.show_frame(StudentStatsPage))
+        lab_group_stat_button = ttk.Button(self, text="Lab Group Statistics",
                            command=lambda: controller.show_frame(LabGroupStatsPage))
-        button2.pack(pady=10, padx=10)
-
-        button3 = ttk.Button(self, text="Results",
+        results_button = ttk.Button(self, text="Results",
                            command=lambda: controller.show_frame(ResultsPage))
-        button3.pack(pady=10, padx=10)
+        quit_button = ttk.Button(self, text="Quit", command=controller.destroy)
+
+        # page layout
+        label.pack(pady=10, padx=10)
+        student_stat_button.pack(pady=10, padx=10)
+        lab_group_stat_button.pack(pady=10, padx=10)
+        results_button.pack(pady=10, padx=10)
+        quit_button.pack(pady=10, padx=10)
 
 
 class StudentStatsPage(tk.Frame):
@@ -104,9 +109,15 @@ class StudentStatsPage(tk.Frame):
         # label = tk.Label(self, text="This is the start page", font=("Verdana",12))
         # label.pack(pady=10, padx=10)
 
-        button1 = ttk.Button(self, text="Back to Home",
-                           command=lambda: controller.show_frame(StartPage))
-        button1.pack(pady=10, padx=10)
+        # buttons
+        start_button = ttk.Button(self, text="Back to Home",
+                            command=lambda: controller.show_frame(StartPage))
+        quit_button = ttk.Button(self, text="Quit", command=controller.destroy)
+
+        # page layout
+        start_button.pack(pady=10, padx=10)
+        quit_button.pack(pady=10, padx=10)
+
 
         self.students = controller.students
         self.plot_times()
@@ -119,33 +130,13 @@ class StudentStatsPage(tk.Frame):
                      "330-430", "4-5"]
         ALL_DAYS = {"M":"Monday", "T":"Tuesday", "W":"Wednesday", "R":"Thursday", "F":"Friday"}
 
-        all_formatted_times = [" ".join([day, time]) for day in ALL_DAYS.keys() for time in ALL_TIMES]
-        # ALL_TIMES = ["M 8-9", "M 830-930", "M 9-10", "M 930-1030", "M 10-11",
-        #              "M 1030-1130", "M 11-12", "M 1130-1230", "M 12-1", "M 1230-130",
-        #              "M 1-2", "M 130-230", "M 2-3", "M 230-330", "M 3-4",
-        #              "M 330-430", "M 4-5",
-        #              "T 8-9", "T 830-930", "T 9-10", "T 930-1030", "T 10-11",
-        #              "T 1030-1130", "T 11-12", "T 1130-1230", "T 12-1", "T 1230-130",
-        #              "T 1-2", "T 130-230", "T 2-3", "T 230-330", "T 3-4",
-        #              "T 330-430", "T 4-5",
-        #              "W 8-9", "W 830-930", "W 9-10", "W 930-1030", "W 10-11",
-        #              "W 1030-1130", "W 11-12", "W 1130-1230", "W 12-1", "W 1230-130",
-        #              "W 1-2", "W 130-230", "W 2-3", "W 230-330", "W 3-4",
-        #              "W 330-430", "W 4-5",
-        #              "R 8-9", "R 830-930", "R 9-10", "R 930-1030", "R 10-11",
-        #              "R 1030-1130", "R 11-12", "R 1130-1230", "R 12-1", "R 1230-130",
-        #              "R 1-2", "R 130-230", "R 2-3", "R 230-330", "R 3-4",
-        #              "R 330-430", "R 4-5",
-        #              "F 8-9", "F 830-930", "F 9-10", "F 930-1030", "F 10-11",
-        #              "F 1030-1130", "F 11-12", "F 1130-1230", "F 12-1", "F 1230-130",
-        #              "F 1-2", "F 130-230", "F 2-3", "F 230-330", "F 3-4",
-        #              "F 330-430", "F 4-5"]
+        formatted_times = [" ".join([day, time]) for day in ALL_DAYS.keys() for time in ALL_TIMES]
 
         fig = plt.Figure(figsize=(15,8), dpi=100)
         ax = fig.add_subplot(111)
 
         # initialize counts
-        all_time_counts = defaultdict(int, {time:0 for time in all_formatted_times})
+        all_time_counts = {time:0 for time in formatted_times}
 
         # count the frequency of times and add to existing counter (defaultdict)
         times = [list(student.available_times) for student in self.students]
@@ -194,9 +185,13 @@ class LabGroupStatsPage(tk.Frame):
         label = tk.Label(self, text="This is the start page", font=("Verdana",12))
         label.pack(pady=10, padx=10)
 
-        button1 = ttk.Button(self, text="Back to Home",
-                           command=lambda: controller.show_frame(StartPage))
-        button1.pack(pady=10, padx=10)
+        # buttons
+        start_button = ttk.Button(self, text="Back to Home",
+                                  command=lambda: controller.show_frame(StartPage))
+        quit_button = ttk.Button(self, text="Quit", command=controller.destroy)
+
+        # page layout
+        start_button.pack(pady=10, padx=10)
 
 
 class ResultsPage(tk.Frame):
@@ -206,9 +201,13 @@ class ResultsPage(tk.Frame):
         label = tk.Label(self, text="This is the start page", font=("Verdana",12))
         label.pack(pady=10, padx=10)
 
-        button1 = ttk.Button(self, text="Back to Home",
-                           command=lambda: controller.show_frame(StartPage))
-        button1.pack(pady=10, padx=10)
+        # buttons
+        start_button = ttk.Button(self, text="Back to Home",
+                                  command=lambda: controller.show_frame(StartPage))
+        quit_button = ttk.Button(self, text="Quit", command=controller.destroy)
+
+        # page layout
+        start_button.pack(pady=10, padx=10)
 
 
 if __name__ == "__main__":
