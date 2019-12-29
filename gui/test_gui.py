@@ -16,7 +16,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-import matplotlib.animation as animation
 from matplotlib import style
 style.use("ggplot")
 
@@ -226,11 +225,11 @@ class StudentStatsFrame(VerticalScrolledFrame):
 
 
         # https://stackoverflow.com/questions/14777066/matplotlib-discrete-colorbar
-        cmap = matplotlib.cm.get_cmap("Reds_r", max(self.all_counts)+1)
+        cmap = matplotlib.cm.get_cmap("plasma", max(self.all_counts)+1)
         im = self.axes[row_num].imshow(np.array(self.all_counts).reshape( (len(self.controller.ALL_DAYS), len(self.controller.ALL_TIMES)) ),
                                        cmap=cmap, vmin=-0.5, vmax=max(self.all_counts)+0.5)
         cbar = self.fig.colorbar(im, ax=self.axes[row_num], ticks=np.arange(max(self.all_counts)+1))
-        cbar.set_label("Number of Students", rotation=270)
+        cbar.set_label("Number of Students", rotation=270, labelpad=15)
 
 
     def plot_time_hist(self, row_num):
@@ -238,7 +237,7 @@ class StudentStatsFrame(VerticalScrolledFrame):
         availabilities (shown across ALL possible times)."""
 
         xs = np.arange(len(self.controller.FORMATTED_TIMES))
-        ys = np.arange(len(self.students))
+        ys = np.arange(len(self.students)+1)
 
         # plot parameters
         self.axes[row_num].bar(xs, self.all_counts, align="center")
@@ -283,16 +282,94 @@ class StudentStatsFrame(VerticalScrolledFrame):
         canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
 
-class LabGroupStatsFrame(tk.Frame):
+class LabGroupStatsFrame(VerticalScrolledFrame):
     """Frame for displaying plots to visualize the lab group data."""
 
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        VerticalScrolledFrame.__init__(self, parent)
         self.parent = parent
         self.controller = controller
 
-        label = tk.Label(self, text="Under construction.", font=("Verdana",12))
-        label.pack(pady=10, padx=10)
+        self.lab_groups = controller.lab_groups
+        self.show_plots(controller)
+
+
+    def plot_time_colored(self, row_num: int=0):
+        """Creates a plot that shows the number of students who have a particular
+        time on a particualar day available."""
+
+        xs = np.arange(len(self.controller.ALL_TIMES))
+        ys = np.arange(len(self.controller.ALL_DAYS))
+
+        # plot parameters
+        # ax.bar(xs, all_counts, align="center")
+        self.axes[row_num].set_xlabel("Times")
+        self.axes[row_num].set_ylabel("Day of the Week")
+        self.axes[row_num].set_xticks(xs)
+        self.axes[row_num].set_xticklabels(self.controller.ALL_TIMES)
+        self.axes[row_num].set_yticks(ys)
+        self.axes[row_num].set_yticklabels(self.controller.ALL_DAYS.values())
+        self.axes[row_num].xaxis.set_tick_params(rotation=90, labelsize=8)
+        self.axes[row_num].yaxis.set_tick_params(labelsize=8)
+        self.axes[row_num].grid(None)
+
+
+        # https://stackoverflow.com/questions/14777066/matplotlib-discrete-colorbar
+        cmap = matplotlib.cm.get_cmap("plasma", max(self.all_counts)+1)
+        im = self.axes[row_num].imshow(np.array(self.all_counts).reshape( (len(self.controller.ALL_DAYS), len(self.controller.ALL_TIMES)) ),
+                                       cmap=cmap, vmin=-0.5, vmax=max(self.all_counts)+0.5)
+        cbar = self.fig.colorbar(im, ax=self.axes[row_num], ticks=np.arange(max(self.all_counts)+1))
+        cbar.set_label("Number of Lab Groups", rotation=270, labelpad=15)
+
+
+    def plot_time_hist(self, row_num):
+        """Creates a plot that shows the number of students with particular time
+        availabilities (shown across ALL possible times)."""
+
+        xs = np.arange(len(self.controller.FORMATTED_TIMES))
+        ys = np.arange(len(self.lab_groups)+1)
+
+        # plot parameters
+        self.axes[row_num].bar(xs, self.all_counts, align="center")
+        self.axes[row_num].set_xlabel("Days/Times")
+        self.axes[row_num].set_ylabel("Number of Lab Groups")
+        self.axes[row_num].set_xticks(xs)
+        self.axes[row_num].set_xticklabels(self.controller.FORMATTED_TIMES)
+        self.axes[row_num].set_yticks(ys)
+        self.axes[row_num].xaxis.set_tick_params(rotation=90, labelsize=8)
+        self.axes[row_num].yaxis.set_tick_params(labelsize=8)
+
+
+    def show_plots(self, controller):
+        """Plots the frequency of times and preferences for lab groups of students."""
+
+        self.fig, self.axes = plt.subplots(nrows=2, ncols=1, figsize=(12,10), dpi=100)
+
+        # initialize counts
+        all_time_counts = {time:0 for time in self.controller.FORMATTED_TIMES}
+
+        # count the frequency of times and add to existing counter (defaultdict)
+        times = [list(lab_group.available_times) for lab_group in self.lab_groups]
+        # https://stackoverflow.com/questions/952914/how-to-make-a-flat-list-out-of-list-of-lists
+        times = list(it.chain.from_iterable(times))
+        time_counts = Counter(times)
+        for time, count in time_counts.items():
+            all_time_counts[time] += count
+        self.all_counts = [count for count in all_time_counts.values()]
+
+        # construct the plots and adjst sizes if necessary
+        self.plot_time_colored(0)
+        self.plot_time_hist(1)
+        self.fig.suptitle("Lab Group Availability", fontsize="xx-large")
+        # plt.subplots_adjust(hspace=0.5)
+
+        canvas = FigureCanvasTkAgg(self.fig, self)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+
+        toolbar = NavigationToolbar2Tk(canvas, self)
+        toolbar.update()
+        canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
 
 class ResultsFrame(tk.Frame):
