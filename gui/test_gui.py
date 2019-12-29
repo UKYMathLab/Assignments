@@ -24,25 +24,9 @@ sys.path.append((Path().cwd().parent/"src").as_posix())
 from utils.configs import PreprocessingConfig
 from preprocessing import preprocess
 
-# f = Figure(figsize=(5,4), dpi=100)
-# a = f.add_subplot(111)
-
-
-def animate(i):
-    with open("SampleData.txt", "r") as f:
-        data_array = f.read().split("\n")
-        xs = []
-        ys = []
-    for line in data_array:
-        if len(line) > 1:
-            x, y = line.split(",")
-            xs.append(int(x))
-            ys.append(int(y))
-    a.clear()
-    a.plot(xs, ys)
-
 
 class MasterApplication(tk.Tk):
+    """Controls the display of all pages."""
 
     def __init__(self, students: list, lab_groups: list, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
@@ -78,6 +62,7 @@ class MasterApplication(tk.Tk):
 
 
 class StartPage(tk.Frame):
+    """Page that is displayed at the startup of the GUI. Can navigate to any page."""
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -103,6 +88,7 @@ class StartPage(tk.Frame):
 
 
 class StudentStatsPage(tk.Frame):
+    """Page for displaying plots to visualize the student data."""
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -124,12 +110,13 @@ class StudentStatsPage(tk.Frame):
 
     def plot_times(self):
         """Plots the frequency of times and preferences for lab groups of students."""
+
+        # these might change depending on the Google Form questions
         ALL_TIMES = ["8-9", "830-930", "9-10", "930-1030", "10-11",
                      "1030-1130", "11-12", "1130-1230", "12-1", "1230-130",
                      "1-2", "130-230", "2-3", "230-330", "3-4",
                      "330-430", "4-5"]
         ALL_DAYS = {"M":"Monday", "T":"Tuesday", "W":"Wednesday", "R":"Thursday", "F":"Friday"}
-
         formatted_times = [" ".join([day, time]) for day in ALL_DAYS.keys() for time in ALL_TIMES]
 
         fig = plt.Figure(figsize=(15,8), dpi=100)
@@ -180,6 +167,8 @@ class StudentStatsPage(tk.Frame):
 
 
 class LabGroupStatsPage(tk.Frame):
+    """Page for displaying plots to visualize the lab group data."""
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="This is the start page", font=("Verdana",12))
@@ -195,6 +184,7 @@ class LabGroupStatsPage(tk.Frame):
 
 
 class ResultsPage(tk.Frame):
+    """Page for displaying the results from assignment algorithm."""
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -216,7 +206,4 @@ if __name__ == "__main__":
     student_data, lab_group_data = preprocess(config)
 
     app = MasterApplication(students=student_data, lab_groups=lab_group_data)
-
-    # ani = animation.FuncAnimation(f, animate, interval=1000)
-
     app.mainloop()
