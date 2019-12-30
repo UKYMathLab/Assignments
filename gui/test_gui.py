@@ -107,7 +107,6 @@ class Container(tk.Frame):
 
         self.add_menu()
 
-
     def add_menu(self):
         """Adds a navigation menu to the frame. Taken from this tutorial:
         https://pythonprogramming.net/tkinter-menu-bar-tutorial/"""
@@ -169,7 +168,6 @@ class MasterApplication(tk.Tk):
             frame.grid(row=0, column=0, sticky="nsew")
         self.show_frame(StartFrame)
 
-
     def show_frame(self, controller):
         """Shows the given frame by moving it to the front of the stack."""
 
@@ -203,7 +201,6 @@ class StudentStatsFrame(VerticalScrolledFrame):
         self.students = controller.students
         self.show_plots(controller)
 
-
     def plot_time_colored(self, row_num: int=0):
         """Creates a plot that shows the number of students who have a particular
         time on a particualar day available."""
@@ -231,8 +228,7 @@ class StudentStatsFrame(VerticalScrolledFrame):
         cbar = self.fig.colorbar(im, ax=self.axes[row_num], ticks=np.arange(max(self.all_counts)+1))
         cbar.set_label("Number of Students", rotation=270, labelpad=15)
 
-
-    def plot_time_hist(self, row_num):
+    def plot_time_hist(self, row_num: int=0):
         """Creates a plot that shows the number of students with particular time
         availabilities (shown across ALL possible times)."""
 
@@ -249,7 +245,6 @@ class StudentStatsFrame(VerticalScrolledFrame):
         self.axes[row_num].xaxis.set_tick_params(rotation=90, labelsize=8)
         self.axes[row_num].yaxis.set_tick_params(labelsize=8)
 
-
     def show_plots(self, controller):
         """Plots the frequency of times and preferences for lab groups of students."""
 
@@ -261,7 +256,7 @@ class StudentStatsFrame(VerticalScrolledFrame):
         # count the frequency of times and add to existing counter (defaultdict)
         times = [list(student.available_times) for student in self.students]
         # https://stackoverflow.com/questions/952914/how-to-make-a-flat-list-out-of-list-of-lists
-        times = list(it.chain.from_iterable(times))
+        times = list(it.chain.from_iterable(times)) # flattened list
         time_counts = Counter(times)
         for time, count in time_counts.items():
             all_time_counts[time] += count
@@ -271,7 +266,7 @@ class StudentStatsFrame(VerticalScrolledFrame):
         self.plot_time_colored(0)
         self.plot_time_hist(1)
         self.fig.suptitle("Student Availability", fontsize="xx-large")
-        # plt.subplots_adjust(hspace=0.5)
+        plt.subplots_adjust(hspace=0.5)
 
         canvas = FigureCanvasTkAgg(self.fig, self)
         canvas.draw()
@@ -290,9 +285,9 @@ class LabGroupStatsFrame(VerticalScrolledFrame):
         self.parent = parent
         self.controller = controller
 
+        self.students = controller.students
         self.lab_groups = controller.lab_groups
         self.show_plots(controller)
-
 
     def plot_time_colored(self, row_num: int=0):
         """Creates a plot that shows the number of students who have a particular
@@ -321,8 +316,7 @@ class LabGroupStatsFrame(VerticalScrolledFrame):
         cbar = self.fig.colorbar(im, ax=self.axes[row_num], ticks=np.arange(max(self.all_counts)+1))
         cbar.set_label("Number of Lab Groups", rotation=270, labelpad=15)
 
-
-    def plot_time_hist(self, row_num):
+    def plot_time_hist(self, row_num: int=0):
         """Creates a plot that shows the number of students with particular time
         availabilities (shown across ALL possible times)."""
 
@@ -339,11 +333,56 @@ class LabGroupStatsFrame(VerticalScrolledFrame):
         self.axes[row_num].xaxis.set_tick_params(rotation=90, labelsize=8)
         self.axes[row_num].yaxis.set_tick_params(labelsize=8)
 
+    def plot_prefs(self, row_num: int=0):
+        """Plots the popularity of lab groups in terms of the students'
+        preferences. The code for generating the plot is from this matplotlib
+        example:
+        https://matplotlib.org/3.1.1/gallery/lines_bars_and_markers/horizontal_barchart_distribution.html#sphx-glr-gallery-lines-bars-and-markers-horizontal-barchart-distribution-py
+        """
+        category_names = ["1st", "2nd", "3rd", "4th", "5th"]
+
+        # get counts of students' preferences for the lab groups
+        # sum of each pref count array should equal the number of students
+        pref_counts = {lab_group.name:np.zeros( (len(self.lab_groups),), dtype=int ) for lab_group in self.lab_groups}
+        for student in self.students:
+            # increment pref count of group at corresponding index
+            for idx, group_id in enumerate(student.preferences):
+                pref_counts[group_id][idx] += 1
+
+        # the code that follows is from an example from matplotlib's gallery page found at
+        # https://matplotlib.org/3.1.1/gallery/lines_bars_and_markers/horizontal_barchart_distribution.html#sphx-glr-gallery-lines-bars-and-markers-horizontal-barchart-distribution-py
+        labels = list(pref_counts.keys())
+        data = np.array(list(pref_counts.values()))
+        data_cum = data.cumsum(axis=1)
+        category_colors = plt.get_cmap('RdYlGn_r')(np.linspace(0.15, 0.85, data.shape[1]))
+
+        self.axes[row_num].invert_yaxis()
+        self.axes[row_num].xaxis.set_visible(False)
+        self.axes[row_num].set_xlim(0, np.sum(data, axis=1).max())
+
+        for i, (colname, color) in enumerate(zip(category_names, category_colors)):
+            widths = data[:, i]
+            starts = data_cum[:, i] - widths
+            self.axes[row_num].barh(labels, widths, left=starts, height=0.6,
+                                    label=colname, color=color)
+            xcenters = starts + widths / 2
+
+            r, g, b, _ = color
+            text_color = "white" if r * g * b < 0.5 else "darkgrey"
+            for y, (x, c) in enumerate(zip(xcenters, widths)):
+                self.axes[row_num].text(x, y, str(int(c)), ha="center", va="center",
+                                        color=text_color, fontsize=8)
+        self.axes[row_num].legend(ncol=len(category_names), bbox_to_anchor=(0.5, -0.2),
+                                  loc="lower center", fontsize="x-small")
+
+        # configure labels and titles
+        self.axes[row_num].set_title("Popularity of Lab Groups")
+        self.axes[row_num].yaxis.set_tick_params(labelsize=8)
 
     def show_plots(self, controller):
         """Plots the frequency of times and preferences for lab groups of students."""
 
-        self.fig, self.axes = plt.subplots(nrows=2, ncols=1, figsize=(12,10), dpi=100)
+        self.fig, self.axes = plt.subplots(nrows=3, ncols=1, figsize=(12,10), dpi=100)
 
         # initialize counts
         all_time_counts = {time:0 for time in self.controller.FORMATTED_TIMES}
@@ -351,7 +390,7 @@ class LabGroupStatsFrame(VerticalScrolledFrame):
         # count the frequency of times and add to existing counter (defaultdict)
         times = [list(lab_group.available_times) for lab_group in self.lab_groups]
         # https://stackoverflow.com/questions/952914/how-to-make-a-flat-list-out-of-list-of-lists
-        times = list(it.chain.from_iterable(times))
+        times = list(it.chain.from_iterable(times)) # flattened list
         time_counts = Counter(times)
         for time, count in time_counts.items():
             all_time_counts[time] += count
@@ -360,8 +399,9 @@ class LabGroupStatsFrame(VerticalScrolledFrame):
         # construct the plots and adjst sizes if necessary
         self.plot_time_colored(0)
         self.plot_time_hist(1)
+        self.plot_prefs(2)
         self.fig.suptitle("Lab Group Availability", fontsize="xx-large")
-        # plt.subplots_adjust(hspace=0.5)
+        plt.subplots_adjust(hspace=1.0)
 
         canvas = FigureCanvasTkAgg(self.fig, self)
         canvas.draw()
