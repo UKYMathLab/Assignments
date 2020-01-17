@@ -26,7 +26,7 @@ def _format_times(sample: pd.DataFrame) -> set:
     for day in days_times:
         # make sure there are available times
         if pd.notna(day):
-            times += [*day.split(";")]
+            times += [*day.split(", ")]
 
     return set(times)
 
@@ -61,7 +61,7 @@ def preprocess(config):
     for i, lg in enumerate(lab_groups):
         sample = lab_group_data.iloc[i]
 
-        lg.name = sample["Name"]
+        lg.name = config.group_map[sample["Name"]]
         lg.available_times = _format_times(sample)
 
     return students, lab_groups
@@ -70,4 +70,10 @@ def preprocess(config):
 if __name__ == '__main__':
     config = configs.PreprocessingConfig()
 
-    students = preprocess(config)
+    studs, lab_groups = preprocess(config)
+
+    for stud in studs:
+        print(f"{stud.name}: {stud.available_times}\n{stud.preferences}")
+    print("\n"*5)
+    for lg in lab_groups:
+        print(f"{lg.name}: {lg.available_times}\n")

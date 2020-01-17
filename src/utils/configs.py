@@ -30,16 +30,23 @@ class PreprocessingConfig:
         # paths
         self.data_dir = find_data_dir(Path().cwd(), desired_dir="data")
         self.student_data_subdir = "raw_data"
-        self.lab_group_data_subdir = "fake_data"
-        self.student_data_file_name = "RealishStudentData.csv"
-        self.lab_group_data_file_name = "FakeLabGroupData.csv"
+        self.lab_group_data_subdir = "raw_data"
+        self.student_data_file_name = "student_sample.csv"
+        self.lab_group_data_file_name = "faculty_sample.csv"
 
         # formatting data
-        self.student_column_names = ["Timestamp", "Name", "Email",
+        self.student_column_names = ["Timestamp", "Name", "Email", "Previous Group(s)", "Visualization",
                                      "Pref1", "Pref2", "Pref3", "Pref4", "Pref5",
-                                     "M_times", "T_times", "W_times", "Th_times", "F_times"]
+                                     "M_times", "T_times", "W_times", "Th_times", "F_times",
+                                     "Course Credit", "Additional Comments"]
         self.lab_group_column_names = ["Timestamp", "Name",
-                                       "M_times", "T_times", "W_times", "Th_times", "F_times"]
+                                       "M_times", "T_times", "W_times", "Th_times", "F_times",
+                                       "Additional Comments"]
+        self.group_map = {"Kate ": "[Ponto - Assignments]", 
+                          "Manon": "[Manon - Heisenberg]", 
+                          "Max Kutler": "[Kutler - Matroids]", 
+                          "Dave": "[Jensen - Brambles and Scrambles]",
+                          "Khrystyna Serhiyenko": "[Serhiyenko - Cluster Variables]"}
 
     @property
     def student_data_path(self):

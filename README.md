@@ -8,3 +8,9 @@ One of the biggest challenges with solving assignment problems is how does one q
 
 # Approaches
 1. Brute force search the space of possible combinations of students, times, and preferences and find a combination that minimizes some "happiness" criteria. For small sets, this is computationally feasible.
+
+# How to Run
+1. Place the two CSV files in `./Assignments/data/raw_data/`.
+2. In `./Assignments/src/utils/configs.py`, navigate to `class PreprocessingConfig`. From here, simply change the values of `self.student_data_subdir` and `self.lab_group_data_subdir` to `raw_data` (if this is not already done). Next change the values of `self.student_data_file_name` and `self.lab_group_data_file_name` to their respective file names. Save the file!
+3. Navigate to `./Assignments/src/` and run the algorithm by executing `python assignments.py` in the command line.
+
