@@ -103,11 +103,13 @@ def find_assignments(students, lab_groups, config):
     scores = [_score_configuration(lg_configurations, lab_groups) for (_, lg_configurations) in good_combos]
 
     # get best matching(s) and record results
-    min_score = min(scores)
-    best_scores_idx = [i for i, score in enumerate(scores) if score == min_score]
-    best_combos = [good_combos[i] for i in best_scores_idx]
-    _write_good_combos(best_combos, config.preprocess_config.data_dir/"best_configurations.txt", lab_groups, write_score=True, score=min_score)
-
+    try:
+        min_score = min(scores)
+        best_scores_idx = [i for i, score in enumerate(scores) if score == min_score]
+        best_combos = [good_combos[i] for i in best_scores_idx]
+        _write_good_combos(best_combos, config.preprocess_config.data_dir/"best_configurations.txt", lab_groups, write_score=True, score=min_score)
+    except ValueError:
+        print("No lab group configuration was found!")
 
 if __name__ == "__main__":
     cfg = configs.AssignmentsConfig()
