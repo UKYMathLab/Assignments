@@ -1,78 +1,88 @@
-import os
 from pathlib import Path
+from typing import Union
 
 
-def find_data_dir(path: Path, desired_dir="data"):
-    # find data directory by searching hierarchy of directories
-    # should find "data" directory
-    max_levels = 3
+def find_path(desired: Union[str, Path], max_levels: int = 3):
+    r"""Searches for a desired directory or file.
 
-    i = 0
-    while i < max_levels:
-        # "data" directory is found
-        if path / desired_dir in path.iterdir():
-            path = path / desired_dir
-            i = max_levels + 1   # condition found, break out of while
-        # move up a directory
-        else:
-            i += 1
-            path = path.parent    # try again, but one directory up
+    Searches recursively for a desired file given an initial
+    starting path and the maximum number of parent directory
+    levels to search from.
+    """
 
-        # don't check too far up hierarchy
-        if i == max_levels:
-            print("Can't find data directory.\n")
+    try:
+        start_path = [p for p in Path().cwd().parents if p.name == "Assignments"][0]
+    except FileNotFoundError:
+        raise FileNotFoundError("Cannot find Assignments directory.")
 
-    return path
+    found_paths = list(start_path.rglob(desired))
+    if len(found_paths) <= 0:
+        raise FileNotFoundError(f"Cannot find {desired} from {start_path}")
+    else:
+        found_path = found_paths[0]
+
+    return found_path
 
 
 class PreprocessingConfig:
-    def __init__(self):
+    def __init__(self, student_data_file: Union[str, Path], lab_group_data_file: Union[str, Path],
+                 file_format: str = "F_2019"):
+        r"""
+        :param student_data_file: Union[str, Path]
+            Either the name of the student data file or a Path to the student data file.
+        :param lab_group_data_file: Union[str, Path]
+            Either the name of the lab group data file or a Path to the lab group data file.
+        :param file_format: str
+            Determines how to parse the given CSV's. Currently implemented for files from
+            Fall 2019 ("F_2019") and Spring 2020 ("S_2020").
+            (default="F_2019")
+        """
+
         # paths
-        self.data_dir = find_data_dir(Path().cwd(), desired_dir="data")
-        self.student_data_subdir = "raw_data"
-        self.lab_group_data_subdir = "raw_data"
-        self.student_data_file_name = "student_sample.csv"
-        self.lab_group_data_file_name = "faculty_sample.csv"
+        self.data_dir = find_path(desired="data")
+        self.student_data_file = find_path(desired=student_data_file)
+        self.lab_group_data_file = find_path(desired=lab_group_data_file)
 
         # formatting data
-        self.student_column_names = ["Timestamp", "Name", "Email", "Previous Group(s)", "Visualization",
-                                     "Pref1", "Pref2", "Pref3", "Pref4", "Pref5",
-                                     "M_times", "T_times", "W_times", "Th_times", "F_times",
-                                     "Course Credit", "Additional Comments"]
-        self.lab_group_column_names = ["Timestamp", "Name",
-                                       "M_times", "T_times", "W_times", "Th_times", "F_times",
-                                       "Additional Comments"]
-        self.group_map = {"Kate ": "[Ponto - Assignments]", 
-                          "Manon": "[Manon - Heisenberg]", 
-                          "Max Kutler": "[Kutler - Matroids]", 
-                          "Dave": "[Jensen - Brambles and Scrambles]",
-                          "Khrystyna Serhiyenko": "[Serhiyenko - Cluster Variables]"}
+        self.file_format = file_format
+        if self.file_format == "F_2019":
+            self.student_column_names = ["Timestamp", "Name", "Email",
+                                         "Pref1", "Pref2", "Pref3", "Pref4", "Pref5",
+                                         "M_times", "T_times", "W_times", "Th_times", "F_times"]
+            self.lab_group_column_names = ["Timestamp", "Name",
+                                           "M_times", "T_times", "W_times", "Th_times", "F_times"]
+            self.group_map = None
+            self.csv_sep = ";"
 
-    @property
-    def student_data_path(self):
-        path = self.data_dir / self.student_data_subdir / self.student_data_file_name
-        if not (path.exists() and path.is_file()):
-            raise FileNotFoundError(path.as_posix())
+        elif self.file_format == "S_2020":
+            self.student_column_names = ["Timestamp", "Name", "Email", "Previous Group(s)", "Visualization",
+                                         "Pref1", "Pref2", "Pref3", "Pref4", "Pref5",
+                                         "M_times", "T_times", "W_times", "Th_times", "F_times",
+                                         "Course Credit", "Additional Comments"]
+            self.lab_group_column_names = ["Timestamp", "Name",
+                                           "M_times", "T_times", "W_times", "Th_times", "F_times",
+                                           "Additional Comments"]
+            self.group_map = {"Kate ": "[Ponto - Assignments]",
+                              "Manon": "[Manon - Heisenberg]",
+                              "Max Kutler": "[Kutler - Matroids]",
+                              "Dave": "[Jensen - Brambles and Scrambles]",
+                              "Khrystyna Serhiyenko": "[Serhiyenko - Cluster Variables]"}
+            self.csv_sep = ", "
 
-        return path
-
-    @property
-    def lab_group_data_path(self):
-        path = self.data_dir / self.lab_group_data_subdir / self.lab_group_data_file_name
-        if not (path.exists() and path.is_file()):
-            raise FileNotFoundError(path.as_posix())
-
-        return path
+        else:
+            raise NotImplementedError(f"The {self.file_format} file format has not been implemented yet!")
 
 
-class AssignmentsConfig:
-    def __init__(self, min_size: int=3, max_size: int=5):
-        self.preprocess_config = PreprocessingConfig()
-
+class AssignmentsConfig(PreprocessingConfig):
+    def __init__(self, min_size: int = 3, max_size: int = 5, **kwargs):
+        super(AssignmentsConfig, self).__init__(**kwargs)
         self.group_sizes = list(range(min_size, max_size+1))
 
 
 if __name__ == "__main__":
-    config = PreprocessingConfig()
+    config = AssignmentsConfig(student_data_file="RealishStudentData.csv", lab_group_data_file="FakeLabGroupData.csv",
+                               file_format="F_2019")
 
     print(f"Data directory: {config.data_dir}")
+    print(f"Student data file path: {config.student_data_file}")
+    print(f"Lab group data file path: {config.lab_group_data_file}")

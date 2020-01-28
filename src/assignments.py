@@ -1,17 +1,10 @@
-import os
 import argparse
 import itertools as it
-import collections
 
-import numpy as np
-import pandas as pd
 from tqdm import tqdm
 
-from utils import configs
+from utils import AssignmentsConfig
 from preprocessing import preprocess
-from Student import Student
-from LabGroup import LabGroup
-import utils.drivers as driver
 
 
 def _check_is_good_combo(student_combo: list, all_students: list, config) -> bool:
@@ -99,7 +92,7 @@ def find_assignments(students, lab_groups, config):
         all_time_combos_pbar.refresh()
 
     # record all found combinations and compute scores
-    _write_good_combos(good_combos, config.preprocess_config.data_dir/"all_configurations.txt", lab_groups)
+    _write_good_combos(good_combos, config.data_dir/"all_configurations.txt", lab_groups)
     scores = [_score_configuration(lg_configurations, lab_groups) for (_, lg_configurations) in good_combos]
 
     # get best matching(s) and record results
@@ -107,16 +100,32 @@ def find_assignments(students, lab_groups, config):
         min_score = min(scores)
         best_scores_idx = [i for i, score in enumerate(scores) if score == min_score]
         best_combos = [good_combos[i] for i in best_scores_idx]
-        _write_good_combos(best_combos, config.preprocess_config.data_dir/"best_configurations.txt", lab_groups, write_score=True, score=min_score)
+        _write_good_combos(best_combos, config.data_dir/"best_configurations.txt", lab_groups, write_score=True, score=min_score)
     except ValueError:
-        print("No lab group configuration was found!")
+        print("No lab group configuration was found!\n")
+
 
 if __name__ == "__main__":
-    cfg = configs.AssignmentsConfig()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--s_data", type=str, default="RealishStudentData.csv",
+                        help="The CSV containing the student data.")
+    parser.add_argument("--lg_data", type=str, default="FakeLabGroupData.csv",
+                        help="The CSV containing the faculty/lab group data.")
+    parser.add_argument("--file_format", type=str, default="F_2019",
+                        help="Determines the parsing of the CSV files (see documentation for more details.")
+    parser.add_argument("--min_size", type=int, default=3,
+                        help="Minimum group size.")
+    parser.add_argument("--max_size", type=int, default=5,
+                        help="Maximum group size.")
+    args = parser.parse_args()
 
-    student_data, lab_group_data = preprocess(cfg.preprocess_config)
+    cfg = AssignmentsConfig(student_data_file=args.s_data, lab_group_data_file=args.lg_data,
+                            file_format=args.file_format,
+                            min_size=args.min_size, max_size=args.max_size)
+
+    student_data, lab_group_data = preprocess(cfg)
 
     find_assignments(student_data, lab_group_data, cfg)
 
-    with open(cfg.preprocess_config.data_dir/"finished.txt", "w") as finish_file:
+    with open(cfg.data_dir/"finished.txt", "w") as finish_file:
         finish_file.write("Finished!")

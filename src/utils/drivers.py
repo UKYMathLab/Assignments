@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+
 class ExamineData:
     def __init__(self, data: pd.DataFrame):
         self.data = data
@@ -8,7 +9,6 @@ class ExamineData:
 
     def pause(self):
         input('Press any key to continue . . . \n')
-
 
 
 class ShowSample:
