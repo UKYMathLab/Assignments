@@ -1,5 +1,7 @@
+from typing import Set
+
 class LabGroup:
-    def __init__(self, group_name: str="", available_times: set=set()):
+    def __init__(self, group_name: str='', available_times: Set=set()):
         self.name = group_name
 
         self.available_times = available_times
@@ -10,12 +12,12 @@ class LabGroup:
         self.actual_group_members = []
 
     def find_members(self, students):
-        r"""Finds compatible students based on time."""
+        """Finds compatible students based on time."""
 
         for time in self.available_times:
             for student in students:
                 # check if intersection is nonempty
-                if (time in student.available_times):
+                if time in student.available_times:
                     # check if key is already in dictionary
                     if time not in self.good_times:
                         self.good_times[time] = set()

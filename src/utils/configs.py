@@ -58,8 +58,9 @@ class PreprocessingConfig:
         return path
 
 
-class AssignmentsConfig:
+class AssignmentsConfig(PreprocessingConfig):
     def __init__(self, min_size: int=3, max_size: int=5):
+        super().__init__()
         self.preprocess_config = PreprocessingConfig()
 
         self.group_sizes = list(range(min_size, max_size+1))

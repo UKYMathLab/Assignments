@@ -10,7 +10,7 @@ from utils import configs, drivers
 
 
 def _load_file(file_path: Path, column_names: list) -> pd.DataFrame:
-    r"""Loads a CSV into a Pandas DataFrame."""
+    """Loads a CSV into a Pandas DataFrame."""
 
     data = pd.read_csv(file_path, header=0, names=column_names)
 
@@ -18,7 +18,7 @@ def _load_file(file_path: Path, column_names: list) -> pd.DataFrame:
 
 
 def _format_times(sample: pd.DataFrame) -> set:
-    r"""Gets times for each day and formats per row."""
+    """Gets times for each day and formats per row."""
 
     days_times = sample[["M_times", "T_times", "W_times", "Th_times", "F_times"]]
 
@@ -32,7 +32,7 @@ def _format_times(sample: pd.DataFrame) -> set:
 
 
 def _format_preferences(sample: pd.DataFrame) -> list:
-    r"""Organizes sample's preferences into an (ordered) list."""
+    """Organizes sample's preferences into an (ordered) list."""
 
     df_prefs = sample[["Pref1", "Pref2", "Pref3", "Pref4", "Pref5"]]
 
@@ -70,4 +70,5 @@ def preprocess(config):
 if __name__ == '__main__':
     config = configs.PreprocessingConfig()
 
-    students = preprocess(config)
+    students, lab_groups = preprocess(config)
+    print(f'{students=}\n\n\n{lab_groups=}')

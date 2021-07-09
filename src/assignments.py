@@ -15,7 +15,7 @@ import utils.drivers as driver
 
 
 def _check_is_good_combo(student_combo: list, all_students: list, config) -> bool:
-    r"""Checks if a given combination is valid.
+    """Checks if a given combination is valid.
 
     Criteria to check:
     (1) All students are accounted for
@@ -33,7 +33,7 @@ def _check_is_good_combo(student_combo: list, all_students: list, config) -> boo
 
 
 def _write_good_combos(good_combos: list, file_name, lab_groups, write_score: bool=False, score: int=0):
-    r"""Writes the given time/student configurations to a specified .txt file."""
+    """Writes the given time/student configurations to a specified .txt file."""
 
     with open(file_name, "w") as f:
         if write_score:
@@ -52,7 +52,7 @@ def _write_good_combos(good_combos: list, file_name, lab_groups, write_score: bo
 
 
 def _score_configuration(combination, lab_groups):
-    r"""Calculates the total unhappiness for a given configuration of lab groups.
+    """Calculates the total unhappiness for a given configuration of lab groups.
 
     Calculated as the sum of the indexes into each student's preference list of
     their actual assignment.
