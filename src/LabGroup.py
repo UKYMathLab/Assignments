@@ -8,8 +8,11 @@ class LabGroup:
         # dictionary of times (key) with compatible students as sets (value)
         self.good_times = dict()
 
-        self.possible_group_members = []
-        self.actual_group_members = []
+        self.possible_members = set()
+        self.actual_members = set()
+
+    def __str__(self):
+        return self.name
 
     def find_members(self, students):
         """Finds compatible students based on time."""
@@ -22,4 +25,5 @@ class LabGroup:
                     if time not in self.good_times:
                         self.good_times[time] = set()
                     self.good_times[time].add(student)
+                    self.possible_members.add(student)
                 # else discard

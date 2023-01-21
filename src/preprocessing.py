@@ -46,29 +46,33 @@ def preprocess(config):
 
     # create and populate an array of Students
     students = [Student() for _ in student_data.index]
-    for i, stud in enumerate(students):
+    for i, student in enumerate(students):
         sample = student_data.iloc[i]
 
-        stud.name = sample["Name"]
-        stud.email = sample["Email"]
+        student.name = str(sample["Name"])
+        student.email = str(sample["Email"])
 
-        stud.available_times = _format_times(sample)
-        stud.preferences = _format_preferences(sample)
-        #print(f'Student {stud.name}: {stud.preferences}\n')
+        student.available_times = _format_times(sample)
+        student.preferences = _format_preferences(sample)
+        #print(f'Student {student.name}: {student.preferences}\n')
 
     # create and populate an array of LabGroups
     lab_groups = [LabGroup() for _ in lab_group_data.index]
-    for i, lg in enumerate(lab_groups):
+    for i, lab_group in enumerate(lab_groups):
         sample = lab_group_data.iloc[i]
 
-        lg.name = sample["Name"]
-        lg.available_times = _format_times(sample)
+        lab_group.name = sample["Name"]
+        lab_group.available_times = _format_times(sample)
 
     return students, lab_groups
 
 
-if __name__ == '__main__':
+def main():
     config = configs.PreprocessingConfig()
 
     students, lab_groups = preprocess(config)
     print(f'{students=}\n\n\n{lab_groups=}')
+
+
+if __name__ == '__main__':
+    main()
