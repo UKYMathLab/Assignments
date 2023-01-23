@@ -13,7 +13,12 @@ def write_assignment(lab_groups, file_name, write_score: bool=False, score: int=
             f.write(f'Unhappiness level: {score}\n')
 
         for lab_group in lab_groups:
-            f.write(f'{lab_group}\n{"-" * len(lab_group.name)}\n' + '\n'.join(student.name for student in lab_group.actual_members) + '\n'*3)
+            common_time, num_available_members = lab_group.find_common_time()
+            f.write(f'{lab_group} [meets at {common_time} ({num_available_members}/{len(lab_group.actual_members)} can meet)]\n' \
+                    f'{"-" * len(lab_group.name)}\n' \
+                    + f'\n'.join(student.name for student in lab_group.actual_members) \
+                    + f'' \
+                    + '\n'*3)
 
 
 def compute_cost(student, lab_group) -> int:
@@ -88,6 +93,8 @@ def find_assignments(students, lab_groups, config):
     for student_assignment, student in zip(lab_group_indices, students):
         lab_groups[student_assignment].actual_members.add(student)
     write_assignment(lab_groups, config.data_dir/'assignment.txt')
+    for lab_group in lab_groups:
+        lab_group.find_common_time()
 
 
 def main():

@@ -1,4 +1,6 @@
+from collections import Counter
 from typing import Set
+
 
 class LabGroup:
     def __init__(self, group_name: str='', available_times: Set=set()):
@@ -27,3 +29,9 @@ class LabGroup:
                     self.good_times[time].add(student)
                     self.possible_members.add(student)
                 # else discard
+    
+    def find_common_time(self):
+        """Finds the time(s) that work best for the most students."""
+        time_counts = Counter(time for student in self.actual_members for time in student.available_times)
+        
+        return time_counts.most_common(n=1)[0]
